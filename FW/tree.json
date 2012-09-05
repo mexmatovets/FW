@@ -1,0 +1,14 @@
+{
+	"id": "1",
+	"text": "Las example",
+	"state":"opened",
+	"children":[{
+		"id": "11",
+		"text":"Curves",
+		"state":"opened",
+		"children":[
+			{"text": "Injection curve"},
+			{"text": "Pressure curve"}
+		]
+	}]
+}

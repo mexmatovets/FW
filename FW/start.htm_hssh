@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<!--
+FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
+<script type="text/javascript" src="../jquery-1.6.min.js"></script>
+//-->
+<html>
+<head>
+	<meta Content-Type="text/html; charset=UTF-8">
+    <title>Border Layout - jQuery EasyUI Demo</title>
+    <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+    <script type="text/javascript" src="http://jquery-easyui.googlecode.com/svn-history/r537/trunk/jquery-1.7.1.min.js"></script>
+    <script language="javascript" type="text/javascript" src="https://raw.github.com/flot/flot/master/jquery.js"></script>
+    <script type="text/javascript" src="http://jquery-easyui.googlecode.com/svn-history/r537/trunk/jquery.easyui.min.js"></script>
+    <!--<script language="javascript" type="text/javascript" src="https://raw.github.com/flot/flot/master/jquery.flot.js"></script>
+	
+	
+	<link href="lib/scripts/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/scripts/jquery.min.js"></script>
+<script type="text/javascript" src="lib/scripts/Base64Bin.js"></script>
+<script type="text/javascript" src="lib/scripts/meshutils.js"></script>
+<script type="text/javascript" src="lib/scripts/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="lib/scripts/jquery-ui.min.js"></script>
+<script type="text/javascript" src="lib/scripts/jquery.blockUI.js"></script>
+<script src="lib/scripts/jquery.filestyle.js" type="text/javascript"></script>-->
+
+<script type="text/javascript" src="../scripts/Base64Bin.js"></script>
+<script type="text/javascript" src="../scripts/meshutils.js"></script>
+<script type="text/javascript" src="../scripts/jquery.blockUI.js"></script>
+<script src="../scripts/jquery.filestyle.js" type="text/javascript"></script>
+
+<script language="javascript" type="text/javascript" src="../flot/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="../flot/jquery.flot.crosshair.js"></script>
+<script language="javascript" type="text/javascript" src="../flot/jquery.flot.selection.js"></script>
+<script language="javascript" type="text/javascript" src="../flot/jquery.flot.rt_data_axis.js"></script>
+<script language="javascript" type="text/javascript" src="../flot/jquery.flot.resize.js"></script>
+
+<script type="text/javascript" src="../scripts/FileSaver.js"></script>
+<script type="text/javascript" src="../scripts/formater.js"></script>
+<script type="text/javascript" src="../scripts/LPC.js"></script>
+<script type="text/javascript" src="../numerical/dsp.js"></script>
+<script type="text/javascript" src="interp.js"></script>
+<script type="text/javascript" src="las_reader.js"></script>
+<script type="text/javascript" src="textParser.js"></script>
+<script type="text/javascript" src="../scripts/progressbar.js"></script>
+<script type="text/javascript" src="other_func.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<script type="text/javascript" src="../scripts/$require.js"></script>
+<script type="text/javascript" src="FW.js"></script>
+<!--<script type="text/javascript" src="ww.js"></script>-->
+
+ <!--   <script>
+        $(function(){
+            var p = $('body').layout('panel','west').panel({
+                onCollapse:function(){
+                    //alert('collapse');
+                }
+            });
+            //    setTimeout(function(){
+            //        $('body').layout('collapse','east');
+            //    },0);
+        });
+    </script>-->
+</head>
+<body id ="ll" class="easyui-layout">
+<!--<div region="north" split="true" border="false" style="height:60px;background:#B3DFDA;">north region</div>-->
+<div id="cent" region="center" split="true" title="Data"  style="overflow:hidden;" >
+    <div class="easyui-layout" fit="true" style="background:#ccc;" >
+        <div id="centreg1" region="center" split="true"   style="overflow:hidden;">
+            <div id="aa1" class="easyui-accordion" fit="true">
+                <div title="Inside data" iconCls="icon-ok" selected="true">
+                    <div style="margin: 10px 0">
+                        <ul id = "treeone" class="easyui-tree" dnd="true"></ul>
+                    </div>
+                </div>
+                <div title="Values" iconCls="icon-reload" style="padding:10px;">
+                    <form>
+                        <p> Пьезопроводность<br>
+                            <input id="kappa"  type="text"  style="width:90px">
+                            [cm^2/sec]
+                        </p><br>
+                        <p> Гидропроводность<br>
+                            <input id="hyd"    type="text"  style="width:90px">
+                            [m^3/(Pa*sec)]
+                        </p><br>
+                        <p> Проницаемость<br>
+                            <input id="perm"   type="text"  style="width:90px">
+                            [mD]
+                        </p><br>
+                        <p> Приведенный радиус<br>
+                            <input id="perm"   type="text"  style="width:90px">
+                            [cm]
+                        </p>
+                    </form>
+                </div>
+				<div  title="Outside data" iconCls="icon-ok" style="overflow:hidden;">
+					<iframe id ="outsdata" style="height:100%;width:100%;overflow:hidden;" src="about:blank"></iframe><!--"http://localhost:7777/::ltxsilk=::/?FD583F3CB33E4226B56558AF1F59C7C3=D%3A/Downloads/hssh/hssh/uptdir/a_FWonGitHub/.htm_hssh"-->				
+                </div>
+				<div title="Table">
+                    <table id="tt" style="width:700px;height:auto" title="Editable DataGrid" iconCls="icon-edit" singleSelect="true" idField="itemid" url="datagrid_data2.json">
+						<thead>
+							<tr>
+								<th field="itemid" width="80">Well</th>
+								<th field="productid" width="120" formatter="productFormatter" editor="{type:'combobox',options:{valueField:'productid',textField:'name',data:products,required:true}}">Time</th>
+								<th field="productid" width="120" formatter="productFormatter" editor="{type:'combobox',options:{valueField:'productid',textField:'name',data:products,required:true}}">Value</th>
+								<th field="listprice" width="80" align="right" editor="{type:'numberbox',options:{precision:1}}">Radius</th>
+								<!--<th field="unitcost" width="80" align="right" editor="numberbox">Unit Cost</th>-->
+								<!--<th field="attr1" width="250" editor="text">Attribute</th>-->
+								<th field="status" width="60" align="center" editor="{type:'checkbox',options:{on:'P',off:''}}">Status</th>
+							</tr>
+						</thead>
+					</table>
+                </div>
+                <div title="Input data" style="padding:10px;">
+                    <form>
+                        <p> Эффективная толщина пласта<br>
+                            <input id="h"  type="text" value="4.5" id="hEdit" style="width:60px">
+                            [m]
+                        </p><br>
+                        <p> Вязкость<br>
+                            <input id="mu" type="text" value="0.6" id="muEdit" style="width:60px">
+                            [mPa*sec]
+                        </p>
+                    </form>
+                </div>
+                <div title="View">
+                    <div id="myView1" style="padding:20px;overflow:hidden;">
+                        <!--<div id="rd1" style="margin:10px;padding:10px;width:500px;height:110px;background:#fafafa;border:1px solid #bbb;"></div>-->
+                        <!--<div id="InjectorRate" style="background:#fafafa">Injector rate<br></div>-->
+                        <div id="placeholderQ1" style="width:400px;height:300px"></div>
+                    </div>
+                </div>				
+            </div>
+        </div>
+        <div id="eastreg1" region="east" split="true" style="overflow:hidden;width:850px;">
+            <div id="aa2" class="easyui-accordion" fit="true">
+                <div title="Inside data" iconCls="icon-ok">
+                    <div style="margin: 10px 0">
+                        <ul id = "treetwo" class="easyui-tree" dnd="true"></ul>
+                    </div>
+                </div>
+                <div title="Values" iconCls="icon-reload" style="padding:10px;">
+                    <form>
+                        <p> Пьезопроводность<br>
+                            <input id="kappa"  type="text"  style="width:90px">
+                            [cm^2/sec]
+                        </p><br>
+                        <p> Гидропроводность<br>
+                            <input id="hyd"    type="text"  style="width:90px">
+                            [m^3/(Pa*sec)]
+                        </p><br>
+                        <p> Проницаемость<br>
+                            <input id="perm"   type="text"  style="width:90px">
+                            [mD]
+                        </p><br>
+                        <p> Приведенный радиус<br>
+                            <input id="perm"   type="text"  style="width:90px">
+                            [cm]
+                        </p>
+                    </form>
+                </div>
+				<div  title="Outside data" iconCls="icon-ok" style="overflow:hidden;">
+					<iframe id ="outsdata2" style="height:100%;width:100%;overflow:hidden;" src="about:blank"></iframe><!--"http://localhost:7777/::ltxsilk=::/?FD583F3CB33E4226B56558AF1F59C7C3=D%3A/Downloads/hssh/hssh/uptdir/a_FWonGitHub/.htm_hssh"-->				
+                </div>
+				<div title="Table" class="itemsCatcher"  selected="true">
+                    <!--<table id="pg2" class="itemsCatcher" style="width:700px;height:auto" title="Editable DataGrid" iconCls="icon-edit" singleSelect="true" idField="itemid" >-->
+				<div class="cart" style="width:100%;">
+					 <div style="background:#fff">
+					<table id="cartcontent" fitColumns="true" style="height:auto;" rownumbers="true">
+						<thead>
+							<tr>
+								<th rowspan="2" field="wellName" editor="text" width=80>Well name</th>
+								<th colspan="5" >Zamer</th>
+							</tr>
+							<tr>
+								<th field="logName" width=110>Curve name</th>
+								<th field="productid" width=110 formatter="productFormatter" editor="{type:'combobox',options:{valueField:'productid',textField:'name',data:products,required:true}}">Curve type</th>
+								<th field="radius" editor="numberbox" width=60>Radius</th>
+								<th field="unvalids" editor="text" width=60>Intervals</th>
+								<th field="index" hidden="true" width=60>Index</th>
+							</tr>
+						</thead>
+					</table>
+					</div>
+				</div>
+                </div>
+                <div title="Input data" style="padding:10px;">
+                    <form>
+                        <p> Расстояние между скважинами<br>
+                            <input id="R"  type="text" value="464" id="REdit" style="width:60px">
+                            [m]
+                        </p><br>
+                        <p> Эффективная толщина пласта<br>
+                            <input id="h"  type="text" value="4.5" id="hEdit" style="width:60px">
+                            [m]
+                        </p><br>
+                        <p> Вязкость<br>
+                            <input id="mu" type="text" value="0.6" id="muEdit" style="width:60px">
+                            [mPa*sec]
+                        </p>
+                    </form>
+                </div>
+				<div title="View">
+                    <div id="myView2" style="padding:20px;overflow:hidden;">
+                        <!--<div id="rd1" style="margin:10px;padding:10px;width:500px;height:110px;background:#fafafa;border:1px solid #bbb;"></div>-->
+                        <!--<div id="InjectorRate" style="background:#fafafa">Injector rate<br></div>-->
+                        <div id="placeholderQ2" style="width:400px;height:300px"></div>
+                    </div>
+                </div>
+				<div title="View manager">
+                    <div style="padding:20px;overflow:hidden;">
+						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'rate',color:'blue'}])" >Add rate</a>	    
+						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'}])" >Add press on injector</a>
+						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pObs',color:'red'}])" >Add press on observer</a>
+						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'},{name:'pObs',color:'red'}])" >Add presses</a>
+						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'},{name:'pObs',color:'red'},{name:'rate',color:'blue'}])" >Add all three</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div region="east" split="true" title="East" style="width:100px;padding:10px;">east region</div>-->
+<div region="south" title="status" split="true" style="height:50px;background:#efefef;overflow:hidden;">
+    <div class="easyui-layout" fit="true"  style="background:#ccc;">
+        <div region="center" style="overflow:hidden;">
+			<input type="edit" hidden="true" style="color: #000000; background-color:#AAAAAA; width: 300px;" id='iurl' value="2_2_period_short.las"  ><input type="button" style="" id='qq' value=">>" onClick="readFileInWorker()" >
+            <a href="#" class="easyui-linkbutton" onclick="continueProcessing()" >Start</a>	
+			<a href="#" class="easyui-linkbutton" onclick="testProgressbar()" >Test</a>	
+        </div>
+        <div region="east" split="true" style="width:200px;overflow:hidden;">
+            <div id="progressbar" class="easyui-progressbar" ></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="technical.js"></script>
+
+<script type="text/javascript">
+   var body = document.querySelector('body');
+    // запуск
+    //////////////////////////////////////////////////////////////////////////////
+    function handleFileSelect(evt) {
+        var files = evt.target.files; // FileList object
+        if (files[0]) url = document.getElementById('iurl').value = files[0].name;	
+        readFile(files[0]);
+        //readFileInWorker(files[0]);
+    }
+    body.addEventListener('drop', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var f;
+        if(e.dataTransfer.files[0]) f=e.dataTransfer.files[0];
+        else if(e.dataTransfer.items[0])f= e.dataTransfer.items[0].getAsFile();
+        if (f) url = document.getElementById('iurl').value = f.name;
+        if (f) readFile(f);
+        //readFileInWorker(f);
+    }, false);
+    //////////////////////////////////////////////////////////////////////////////
+    // workers
+    // editable
+	var currentTree=new treeProcessing();
+	function updateTrees(list){	
+		currentTree.appendTree($('#iurl')[0].value, list);
+		currentTree.updateTreeView();
+		$.unblockUI();
+		$('#progressbar').progressbar('setValue', 100);
+	}
+    //////////////////////////////////////////////////////////////////////////////	
+    function readFileInWorker(fileAsText){
+        var url=document.getElementById('iurl').value;
+        url = LPC.expand_url(url);
+        self.lpc||(self.lpc=initLPC(function(m){
+		if (m[0].mc) console.log(m[0].mc); 
+		if(m[0].mu) $.blockUI({ message: '<img src="../scripts/images/wait27.gif" /> '+ m[0].mu });  
+		if(m[0].mp) $('#progressbar').progressbar('setValue', m[0].mp); 
+		if(m[0].aa) myGlob.appendGraphArray(m[0].aa[0],m[0].aa[1]);
+		if(m[0].unlock) $.unblockUI();
+		if(m[0].alert) alert(m[0].alert);
+		}) );		
+
+        readLogsNames({url:url, fileAsText:fileAsText})({
+            done:function(r){
+				updateTrees(r.logs);
+                //logSelectForm(r);
+            },
+            fail:function(e){
+                console.error(self.e=e);
+            }
+        });
+        return lpc;
+    }
+    var bar1 = new ProgressBar("progressContainer1", 14, "progressTable", "cell1", "size");
+
+    //document.getElementById('idfile').addEventListener('change', handleFileSelect, false);
+
+    body.addEventListener('dragenter', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+    }, false);
+
+    body.addEventListener('dragover', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+    }, false);
+
+    $(document).ready(
+            function(){
+                $(window).beforeprint=function(){
+                    document.getElementById('form0').hidden=1
+                };
+                $(window).afterprint=function(){
+                    document.getElementById('form0').hidden=0
+                } ;
+                //getOpts();
+                $("#tabs").tabs();
+				if (0){
+					var data ={"total":28,"rows":[
+						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"0 100 200 400 500 1000",	"index":1},
+						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},
+						{"wellName":"Well 2839","logName":"Well_2839.pressure.time   .S                                    ","productid":"Pressure time", "radius":496,"unvalids":"",							"index":3},
+						{"wellName":"Well 2839","logName":"Well_2839.pressure.value  .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":4},
+						{"wellName":"Well 3110","logName":"Well_3110.rate.time  	  .S                                    ","productid":"Rate time",     "radius":0,  "unvalids":"",							"index":5},
+						{"wellName":"Well 3110","logName":"Well_3110.rate.value  	  .M3/DAY                               ","productid":"Rate value",    "radius":0,  "unvalids":"",							"index":6}
+					]}; 
+					$('#cartcontent').datagrid('loadData', data);
+				}
+				if (1){
+					var data ={"total":28,"rows":[
+						{"wellName":"Well 3110","logName":"3110.Days",						"productid":"Pressure time", "radius":0,  "unvalids":"0 100 200 400 500 1000",	"index":1},
+						{"wellName":"Well 3110","logName":"3110.\"Water Injected Rate\"",	"productid":"Pressure value","radius":0,  "unvalids":"",						"index":2},
+						{"wellName":"Well 57",  "logName":"57.Days",						"productid":"Pressure time", "radius":496,"unvalids":"",						"index":3},
+						{"wellName":"Well 57",  "logName":"57.\"Bulk Pressure\"\r",			"productid":"Pressure value","radius":496,"unvalids":"",						"index":4},
+						{"wellName":"Well 3110","logName":"3110.Days",						"productid":"Rate time", 	 "radius":0,  "unvalids":"",						"index":5},
+						{"wellName":"Well 3110","logName":"3110.\"Bulk Pressure\"\r",			"productid":"Rate value",    "radius":0,  "unvalids":"",						"index":6}
+					]}; 
+					$('#cartcontent').datagrid('loadData', data);
+				}				
+            }
+    );
+
+    document.onpaste = function(event){
+        var items = event.clipboardData.items;
+        console.log(JSON.stringify(items)); // will give you the mime types
+        var blob = items[0].getAsFile();
+        var reader = new FileReader();
+        reader.onload = function(event){
+            console.log(event.target.result)
+        }; // data url!
+        reader.readAsDataURL(blob);
+    }
+</script>
+</body>
+</html>

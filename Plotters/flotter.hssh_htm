@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--
+FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
+//-->
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Flotter</title>
+    <!--<link href="layout.css" rel="stylesheet" type="text/css">-->
+    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
+    <!--<script language="javascript" type="text/javascript" src="../tmp/Drag.js"></script>-->
+    <script language="javascript" type="text/javascript" src='../scripts/jquery-1.7.1.js'></script>
+    <script language="javascript" type="text/javascript" src='../scripts/jquery.blockUI.js'></script>
+    <script language="javascript" type="text/javascript" src="../scripts/$require.js"></script>
+    <style type="text/css">
+        html, body {
+            height: 100%; /* make the percentage height on placeholder work */
+        }
+        .message {
+            padding-left: 50px;
+            font-size: smaller;
+        }
+    </style>
+</head>
+<body>
+<input type="button"  value="@" style="position:fixed;top:0;right:0;" onclick="set_range()"/>
+
+<div id="idcaption"><center> flotter</div>
+<div id="placeholder" style="width:95%;height:95%;"></div>
+
+<p class="message"></p>
+
+
+<script id='ffi'>
+    $require.lm=0
+    $require('../scripts/jsutils.js',"../flot/jquery.flot.js","../flot/jquery.flot.resize.js","../flot/jquery.flot.selection.js","../flot/jquery.flot.crosshair.js","../flot/jquery.colorhelpers.js" );
+    if(!self.LPC) $require('../scripts/LPC.js');
+    if(0)
+    {
+        $require('../scripts/flot.js')
+        $require('../numerical/Spec_Func/expint.js');
+
+        ei=function(n,t){  return (t>0)?SpecFunctions.expint(n,t):0 }
+        aa=[];for(var f=0.001;f<10;f+=0.001){aa.push([f,ei(1,f)])  }
+        ss=document.getElementsByTagName('script')
+    }
+</script>
+<script id='isc' type="text/javascript" defer async=true>
+    var plot_obj,placeholder,data,nofirts;
+
+    console.log('isc...')
+    function asyn( fu)
+    {
+        setTimeout(fu,50);
+    }
+
+    function plot(fdata,fopts)
+    {
+        var tic=LPC.Tic();
+
+        if(fopts&&fopts.caption)
+        {
+            var el=$("#idcaption")[0];
+            el.innerHTML='<'+'center'+'>'+fopts.caption;
+
+        }
+
+        console.time('plot:')
+        tic.start();
+        $.blockUI('repaint..')
+        var plotz,options,data;
+        placeholder = $("#placeholder");
+        var pf= $.plot;
+        /*	
+         placeholder.bind("plotselected", function (event, ranges) {
+         // clamp the zooming to prevent eternal zoom
+         if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
+         ranges.xaxis.to = ranges.xaxis.from + 0.00001;
+         if (ranges.yaxis.to - ranges.yaxis.from < 0.00001)
+         ranges.yaxis.to = ranges.yaxis.from + 0.00001;
+
+         function getData(from,to){
+         var dz=[]
+         data.forEach(function(v){
+
+         }		  
+         )
+         }
+         // do the zooming
+         plotz = $.plot($("#placeholder"), getData(ranges.xaxis.from, ranges.xaxis.to),
+         $.extend(true, {}, options, {
+         xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
+         yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
+         }));
+
+
+
+         // don't fire event on the overview to prevent eternal loop
+         //overview.setSelection(ranges, true);
+         });
+         */
+        var args=jsutils.to_array(arguments);
+        args.unshift(placeholder);
+        plot_obj =pf.apply($,args);
+        self.data=data=plot_obj.getData();
+        self.options=options=plot_obj.getOptions();
+
+        $.unblockUI()
+        console.timeEnd('plot:')
+        return tic.sec();
+    }
+    //$(document).ready(
+    //asyn
+    function set_range(xmin,xmax,ymin,ymax)
+    {
+
+        var data=plot_obj.getData();
+        data.forEach(function(d){
+            var ox=d.xaxis.options,oy=d.yaxis.options;
+            ox.min=xmin
+            ox.max=xmax
+            oy.min=ymin
+            oy.max=ymax
+
+        })
+
+        plot_obj.clearSelection();
+        plot_obj.setupGrid();
+        plot_obj.draw();
+
+    }
+
+    function init() {
+
+        nofirts=1
+
+        console.log('$ JQ...')
+        d1 = [];
+        for (var i = 0; i < 14; i += 0.5)
+            d1.push([i, Math.sin(i)]);
+
+        d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
+        d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
+
+        placeholder = $("#placeholder");
+
+        //
+        //if(parent!=window)
+        //{
+            //plot_obj = $.plot(placeholder, []);
+        //    $.blockUI({message:'wait data ...'});
+        //}
+        //else plot_obj = $.plot(placeholder, [d1, d2, d3]);
+
+        // the plugin includes a jQuery plugin for adding resize events to
+        // any element, let's just add a callback so we can display the
+        // placeholder size
+//	
+
+
+        placeholder.bind('mouseup', function (e) {
+            if(e.button==2)
+            {
+                set_range();
+            }
+        })
+
+
+        placeholder.bind("plotselected", function (event, ranges) {
+            // clamp the zooming to prevent eternal zoom
+            if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
+                ranges.xaxis.to = ranges.xaxis.from + 0.00001;
+            if (ranges.yaxis.to - ranges.yaxis.from < 0.00001)
+                ranges.yaxis.to = ranges.yaxis.from + 0.00001;
+            console.log('ranges',ranges)
+            // do the zooming
+            /*
+             $.plot($("#placeholder"), getData(),
+             $.extend(true, {}, options, {
+             xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
+             yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
+             }));
+             */
+
+            // don't fire event on the overview to prevent eternal loop
+            //overview.setSelection(ranges, true);
+
+
+            /*
+             var data=plot_obj.getData();
+             data.forEach(function(d){
+             var ox=d.xaxis.options,oy=d.xaxis.options;
+             ox.min=ranges.xaxis.from
+             ox.max=ranges.xaxis.to
+             oy.min=ranges.yaxis.from
+             oy.max=ranges.yaxis.to
+
+             })
+             plot_obj.clearSelection();
+             plot_obj.setupGrid();
+             plot_obj.draw();
+             */
+            set_range(ranges.xaxis.from,ranges.xaxis.to,ranges.yaxis.from,ranges.yaxis.to)
+        });
+        placeholder.resize(function () {
+            //$(".message").text();
+            var s="plot size is  " + $(this).width() + "x" + $(this).height() + " pixels"
+            console.log(s)
+
+        });
+
+    };
+    //window.onload=function(){asyn(init)};
+    init();
+</script>
+
+</body>
+</html>
