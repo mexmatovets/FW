@@ -115,11 +115,14 @@ function getOpts(){
 		return inputDataToWorker;
 }
 function Solver(toSend){	
+	self.log.send({obj:toSend});
+	//debug_LT(toSend);
 	if (self.lasfile){self.las=newSelecting({corresponding:[4,5,0,1,2,3]});}	
 	if (self.txtfile){self.las=newSelecting({corresponding:[476,477,332,335,476,479]});}
+	//не забывать, что у нагнетательной скважины R=0;
 	var rate=reduse_curve(self.las.curves[0],512,512).cn;self.log.send({aa:["rate", rate]});
-	var pInj=reduse_curve(self.las.curves[1],512,512).cn;self.log.send({aa:["pInj", pInj]});
-	var pObs=reduse_curve(self.las.curves[2],512,512).cn;self.log.send({aa:["pObs", pObs]});	
+	var pInj=reduse_curve(self.las.curves[2],512,512).cn;self.log.send({aa:["pInj", pInj]});
+	var pObs=reduse_curve(self.las.curves[1],512,512).cn;self.log.send({aa:["pObs", pObs]});	
 	return {};
 };
 function newcontinueProcessingInWorker(opts){

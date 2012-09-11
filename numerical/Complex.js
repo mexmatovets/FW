@@ -131,6 +131,50 @@ Complex.prototype.divide = function(operand) {
 
 	return this;
 };
+Complex.prototype.polynom = function(koeffs){
+	var sum=new Complex();
+	for (var i = 0; i < koeffs.length; i++){
+		var tmp=new Complex(this.real, this.imag);
+		for (var ii=0;ii<i;ii++) {
+			var m=new Complex(this.real, this.imag);
+			tmp=tmp.multiply(m);
+		}
+		tmp.multiply(koeffs[i]);
+		sum=sum.add(tmp);
+	}
+	return sum;	
+}
+Complex.prototype.sqrt = function(){
+	var real, imag;
+	var r = this.abs();
+	real = Math.sqrt((r+this.real)*0.5);
+	if (this.imag>=0) 
+		imag = Math.sqrt((r-this.real)*0.5); 
+	else 
+		imag = -Math.sqrt((r-this.real)*0.5);
+	this.real = real;
+	this.imag = imag;
+	return this;
+}
+Complex.prototype.exp = function(){
+	var real, imag;
+	real=Math.exp(this.real)*Math.cos(this.imag);
+	imag=Math.exp(this.real)*Math.sin(this.imag);
+	this.real = real;
+	this.imag = imag;	
+	return this;
+}
+Complex.prototype.inverse= function(){
+	var real, imag, zn, tmp, sopr;
+	tmp = new Complex(this.real, this.imag);	
+	sopr = new Complex(this.real, -this.imag);
+	zn=tmp.multiply(sopr);
+	sopr = Complex(this.real, -this.imag);
+	tmp=sopr.divide(zn);
+	this.real = tmp.real;
+	this.imag = tmp.imag;	
+	return this;
+}
 Complex.prototype.div=Complex.prototype.divide;
 Complex.prototype.mul=Complex.prototype.multiply;
 Complex.prototype.sub=Complex.prototype.subtract;

@@ -277,6 +277,9 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 		if(m[0].aa) myGlob.appendGraphArray(m[0].aa[0],m[0].aa[1]);
 		if(m[0].unlock) $.unblockUI();
 		if(m[0].alert) alert(m[0].alert);
+		if(m[0].obj) {
+			debug_LT(m);
+		}
 		}) );		
 
         readLogsNames({url:url, fileAsText:fileAsText})({
@@ -316,7 +319,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 } ;
                 //getOpts();
                 $("#tabs").tabs();
-				if (0){
+				if (1){
 					var data ={"total":28,"rows":[
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"0 100 200 400 500 1000",	"index":1},
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},
@@ -327,7 +330,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 					]}; 
 					$('#cartcontent').datagrid('loadData', data);
 				}
-				if (1){
+				if (0){
 					var data ={"total":28,"rows":[
 						{"wellName":"Well 3110","logName":"3110.Days",						"productid":"Pressure time", "radius":0,  "unvalids":"0 100 200 400 500 1000",	"index":1},
 						{"wellName":"Well 3110","logName":"3110.\"Water Injected Rate\"",	"productid":"Pressure value","radius":0,  "unvalids":"",						"index":2},
