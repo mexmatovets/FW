@@ -115,30 +115,42 @@ function getOpts(){
 		return inputDataToWorker;
 }
 function Solver(toSend){	
-	self.log.send({obj:toSend});
-	//debug_LT(toSend);
+	//self.log.send({obj:toSend});
+	try{//start_LT_solver
+		self.tic=LPC.Tic();
+		start_LT_solver(toSend);
+		self.log.send({mc:["LT_solver is OK!", self.tic.sec()]});
+	}catch (e) {
+		self.log.send({unlock:1});self.log.send({alert:e});
+	}
+
 	if (self.lasfile){self.las=newSelecting({corresponding:[4,5,0,1,2,3]});}	
 	if (self.txtfile){self.las=newSelecting({corresponding:[476,477,332,335,476,479]});}
 	//не забывать, что у нагнетательной скважины R=0;
 	var rate=reduse_curve(self.las.curves[0],512,512).cn;self.log.send({aa:["rate", rate]});
-	var pInj=reduse_curve(self.las.curves[2],512,512).cn;self.log.send({aa:["pInj", pInj]});
-	var pObs=reduse_curve(self.las.curves[1],512,512).cn;self.log.send({aa:["pObs", pObs]});	
+	var pInj=reduse_curve(self.las.curves[1],512,512).cn;self.log.send({aa:["pInj", pInj]});
+	var pObs=reduse_curve(self.las.curves[2],512,512).cn;self.log.send({aa:["pObs", pObs]});	
 	return {};
 };
 function newcontinueProcessingInWorker(opts){
     if(LPC.is_worker()){
-        if (self.lasfile){									self.log.send({mu:"data reading"});self.tic=LPC.Tic();self.log.send({mp:30});		
-            self.LAS=new DataObject(lasfile).las;			self.log.send({mc:["data reading is OK!", self.tic.sec()]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
-			var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec()]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
-			var res = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
-			return res;
-        }
-        if (self.txtfile){									self.log.send({mu:"data reading"});self.tic=LPC.Tic();self.log.send({mp:30});
-			self.LAS=textReader();							self.log.send({mc:["data reading is OK!", self.tic.sec()]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
-			var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec()]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
-			var res = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
-			return res;			
-        }
+		try{
+			if (self.lasfile){									self.log.send({mu:"data reading"});self.tic=LPC.Tic();self.log.send({mp:30});		
+				self.LAS=new DataObject(lasfile).las;			self.log.send({mc:["data reading is OK!", self.tic.sec()]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
+				var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec()]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
+				var res = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
+				return res;
+			}
+			if (self.txtfile){									self.log.send({mu:"data reading"});self.tic=LPC.Tic();self.log.send({mp:30});
+				self.LAS=textReader();							self.log.send({mc:["data reading is OK!", self.tic.sec()]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
+				var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec()]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
+				var res = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
+				return res;			
+			}
+		}catch (e) {
+			self.log.send({unlock:1});self.log.send({alert:e});
+			return {};
+		}
     }
     else
         return lpc.callf('newcontinueProcessingInWorker',getOpts());
@@ -187,9 +199,47 @@ function continueProcessingInWorker(opts){
     else
         return lpc.callf('continueProcessingInWorker',loadPales());
 }
+function check_table(opts){
+	if (opts.rows.rows.length<4) throw "You should append more rows to table. Use drag&drop method for instance.";
+	if (opts.rows.rows.length%2) throw "Expected an even number of curves";
+	//self.log.send({obj:opts});
+	
+	function find_pid(name, rows){
+		var pair=[];
+		for (var i = 0; i < rows.length; i++){
+			if(rows[i].wellName===name) {
+				if (!rows[i].productid) throw "Please set all curve types";
+				pair.push(rows[i].productid);
+			}
+		}
+		return pair;
+	}	
+	function check_presence(o,name){//если не хватает пары
+		for(var i = 0; i < o.length; i++){
+			switch (o[i]){
+				case "Pressure time"  :{var netu=1;for(var j = 0; j < o.length; j++){if(o[j]==="Pressure value"){netu=0;break;}}if (netu) throw name+" must have Pressure value type";break;}
+				case "Pressure value" :{var netu=1;for(var j = 0; j < o.length; j++){if(o[j]==="Pressure time" ){netu=0;break;}}if (netu) throw name+" must have Pressure time type" ;break;}
+				case "Rate time"      :{var netu=1;for(var j = 0; j < o.length; j++){if(o[j]==="Rate value"    ){netu=0;break;}}if (netu) throw name+" must have Rate value type"    ;break;}
+				case "Rate value"     :{var netu=1;for(var j = 0; j < o.length; j++){if(o[j]==="Rate time"     ){netu=0;break;}}if (netu) throw name+" must have Rate time type"     ;break;}
+			}
+		}
+	}
+	
+	var hjh={}; 
+	for (var i = 0; i < opts.rows.rows.length; i++){
+		hjh[opts.rows.rows[i].wellName]=find_pid(opts.rows.rows[i].wellName, opts.rows.rows);
+	}
+	var Wcount = 0;
+	for (var tmp in hjh) if (hjh.hasOwnProperty(tmp)) {check_presence(hjh[tmp],tmp); Wcount++;}
+	if (Wcount<2) throw "Please set more then one well name"
+	
+	//обязательно одинаковое число х и у курв
+	//обязательно наличие одной(!) курвы рейтов (х и у)
+	//обязательно наличие хотябы одной курвы давлений на обсервере (выполняется автоматически за счет условия 1)
+}
 function buildInputObjToSolver(opts){
 	var toSend=[];
-	if (opts.rows.rows.length<6) self.log.send({alert:"You should append more rows to table. Use drag&drop method for instance."});
+	check_table(opts);
 	for (var i = 0; i < opts.rows.rows.length; i++){
 		var ind=-1;for (var ii=0; ii< self.LAS.curve_names.length;ii++){if (self.LAS.curve_names[ii]===opts.rows.rows[i].logName) ind=ii} if(ind===-1) self.log.send({alert:"Ooops..."}); var data=self.LAS.curves[ind];
 		var unv=[];var tmp = opts.rows.rows[i].unvalids.match(/((-|)\d*\.*\d+)(\t*|\s*|\n)/g) ;if (tmp&&tmp.length>1)  for (var ii = 0; ii < tmp.length/2 ;ii++){ unv.push({x0:tmp[2*ii]-0,x1:tmp[2*ii+1]-0  });   }

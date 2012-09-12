@@ -274,13 +274,24 @@ $(function(){
     for (var i = 0; i < 14; i += 0.5) d1.push([i, Math.sin(i)]);		
     for (var i = 0; i < rds.length; i++){        $(rds[i]).draggable().resizable();    }});
 /*/
+function addKappas(){
+	var arr=[], obj=[]; 
+	for (tmp in myGlob.graphArrays) 
+		if (myGlob.graphArrays.hasOwnProperty(tmp)) 
+			if(tmp.search(" kappa")!=-1)
+				arr.push(tmp);
+	for (var i = 0; i < arr.length; i++){
+		obj.push({name:arr[i]});//[{name:'pInj',color:'green'}
+	}
+	addArbitrary(obj);
+}
 function addArbitrary(graphs){
 	var div = document.getElementById('myView1'); 
 	var divChild=document.createElement('div');
 	divChild.setAttribute('id','placeholderGr'+myGlob.count);	
 	divChild.setAttribute('style','width:400px;height:300px');
 	// openflot event
-	var toShow=[]; for (var i = 0; i < graphs.length; i++){ toShow.push({data:myGlob.graphArrays[graphs[i].name],color:graphs[i].color})}
+	var toShow=[]; for (var i = 0; i < graphs.length; i++){ toShow.push({data:myGlob.graphArrays[graphs[i].name],color:graphs[i].color,label:graphs[i].name})}
 	//function divDblClick(toShow){		flo=openflot(); flo(toShow)	}
 	divChild.ondblclick = function (){		
 		myGlob.showGraph("#"+this.id);

@@ -8,10 +8,10 @@ LT=function(F,t){
 		var s0=1/Tmax;
 		var w0=2*Math.PI/Tp;
 		var s=[],z=[],td=[];
-		for(var i = 0; i < 39; i++) {
-			s[i]=(i*1.1+1)*s0;
+		for(var i = 0; i < 491; i++) {
+			s[i]=((i)*0.1+1)*s0;
 			z[i]=new Complex(s[i],w0);
-			td[i]=1/(s[i]*Tp)
+			td[i]=1/(s[i]*Tp);
 		}
 		return {z:z,td:td};
 	}
@@ -139,3 +139,79 @@ function debug_LT(obj){
 	toPlot=[]; for (var i = 0; i < z.td.length; i++) toPlot[i]=[z.td[i],self.kappa_et1[i]];
 	flo=openflot(); flo([{data:toPlot}]);
 }
+function parse_rate(obj, z){
+	var x=[], y=[];
+	for (var  i = 0; i < obj.length; i++){
+		if(obj[i].dataType==="Rate time")  {if (obj[i].R!==0&&obj[i].R!=="0") throw "Rates should have R=0"; x=obj[i].data;}
+		if(obj[i].dataType==="Rate value") {if (obj[i].R!==0&&obj[i].R!=="0") throw "Rates should have R=0"; y=obj[i].data;}
+	}
+	if (!x||!y) throw "Error in rate parse!";
+	
+	var lq=new LT(y, x);	
+	return lq.make_fast(z);
+}
+function parse_observers(obj, z){
+	var x=[], y=[], lp=[], lps=[];
+	for (var  i = 0; i < obj.length; i++){
+		if(obj[i].dataType==="Pressure time")  x.push({data:obj[i].data, wellName:obj[i].wellName, R:obj[i].R});
+		if(obj[i].dataType==="Pressure value") y.push({data:obj[i].data, wellName:obj[i].wellName, R:obj[i].R});
+	}
+	if (!x||!y||x.length!=y.length) throw "Error in pressure parse!";
+	for (var  i = 0; i < x.length; i++){
+		for (var  j = 0; j < x.length; j++){
+			if (x[i].wellName===y[j].wellName) {
+				if (x[i].R!=y[j].R) throw "Wells with similar names must have similar R!";
+				if (x[i].R!=0) lp.push({lp:(new LT(y[j].data, x[i].data)),R:x[i].R,wellName:x[i].wellName});// не учитываем давление на инжекторе
+			}
+		}
+	}
+	for (var  i = 0; i < lp.length; i++){
+		lps[i]={lps:lp[i].lp.make_fast(z),R:lp[i].R,wellName:lp[i].wellName};
+	}
+	return lps;
+}
+function LT_solve(lps, lqs, z){
+	var kappa_curves=[];
+	for (var i = 0; i < lps.length; i++){
+		var theta=(new LT([1], [1])).angle(lps[i].lps,lqs);
+		var eta=calc_eta_n(theta,z,0);
+		kappa_curves[i]={kappa_curves:get_kappa(eta,lps[i].R),wellName:lps[i].wellName};
+	}
+	return kappa_curves;
+}
+function save_curves_in_local_memory(kappa_curves, x){
+	var toPlot=[]; 
+	for (var i = 0; i < kappa_curves.length; i++){
+		toPlot[i]=[]; for (var j = 0; j < x.length; j++) toPlot[i][j]=[x[j],kappa_curves[i].kappa_curves[j]];
+		self.log.send({aa:[kappa_curves[i].wellName+" kappa", toPlot[i]]});
+	}
+}
+function start_LT_solver(obj){
+	/*------Solver------/*/			
+			//парсим объект
+			//отдельно обрабатывается курва с закачкой
+			//заносим графики капп для всех остальных обсерверов 
+	var z = (new LT([1], [1])).generate_complex(); 
+	var lqs=parse_rate(obj, z.z); if (!lqs) {throw "Error in rate curve parse!"; }
+	var lps=parse_observers(obj, z.z);
+	var kappa_curves=LT_solve(lps, lqs, z.z);
+	save_curves_in_local_memory(kappa_curves, z.td);
+	/*------------------/*/
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

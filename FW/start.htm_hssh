@@ -214,6 +214,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pObs',color:'red'}])" >Add press on observer</a>
 						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'},{name:'pObs',color:'red'}])" >Add presses</a>
 						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'},{name:'pObs',color:'red'},{name:'rate',color:'blue'}])" >Add all three</a>
+						<a href="#" class="easyui-linkbutton" onclick="addKappas()" >Show kappas</a>
                     </div>
                 </div>
             </div>
@@ -278,7 +279,8 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 		if(m[0].unlock) $.unblockUI();
 		if(m[0].alert) alert(m[0].alert);
 		if(m[0].obj) {
-			debug_LT(m);
+			self.m=m;
+			//start_LT_solver(m[0].obj);
 		}
 		}) );		
 
