@@ -41,14 +41,13 @@ LT=function(F,t){
         var t=this.tt;
 		var F=this.F;
 		var mF=this.mF;
-		
+		var t1,t0=t[0],Fi,er1,er0,ei1,ei0;		
 		s.forEach(function(el,ei){
-			var t1,t0=t[0];
 			for(var i = 0; i < N; i++){
-				t1=t[i+1];
+				t1=t[i+1];Fi=F[i];er1=Math.exp(-el.real*t1);er0=Math.exp(-el.real*t0);ei1=-el.imag*t1;ei0=-el.imag*t0;
 				r[ei]=new Complex(
-					F[i]*(Math.exp(-el.real*t1)*Math.cos(-el.imag*t1)-Math.exp(-el.real*t0)*Math.cos(-el.imag*t0)),
-					F[i]*(Math.exp(-el.real*t1)*Math.sin(-el.imag*t1)-Math.exp(-el.real*t0)*Math.sin(-el.imag*t0))
+					Fi*(er1*Math.cos(ei1)-er0*Math.cos(ei0)),
+					Fi*(er1*Math.sin(ei1)-er0*Math.sin(ei0))
 					).add(r[ei]);
 				t0=t1;
 			}
@@ -77,7 +76,7 @@ LT=function(F,t){
 		//}
 		//self.err=ern;
 		//return {r:r, err:err, ern:ern}/*/
-	}	
+	}		
 	this.angle=function(l1,lq){
 		if (l1.r.length!=lq.r.length) throw "Error in angle function";
 		var res = [];
