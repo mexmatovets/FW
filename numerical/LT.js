@@ -17,9 +17,9 @@ LT=function(F,t){
 	}
 	this.make=function(s){
 		var nr=[], err=[], ern=[];
-        N=this.NL;
-        r=[]; for(var i = 0; i < s.length; i++) r[i]=0;
-        t=this.tt;
+        var N=this.NL;
+        var r=[]; for(var i = 0; i < s.length; i++) r[i]=0;
+        var t=this.tt;
 		for(var ri = 0; ri < s.length; ri++){
 			for(var i = 0; i < N; i++){
 				r[ri]=s[ri].copy().mul(-t[i+1]).exp().sub(s[ri].copy().mul(-t[i]).exp()).mul(this.F[i]).add(r[ri]);		
@@ -36,28 +36,50 @@ LT=function(F,t){
 	}
 	this.make_fast=function(s){
 		var nr=[], err=[], ern=[];
-        N=this.NL;
-        r=[]; for(var i = 0; i < s.length; i++) r[i]=0;
-        t=this.tt;
-		for(var ri = 0; ri < s.length; ri++){
+        var N=this.NL;
+        var r=[]; for(var i = 0; i < s.length; i++) r[i]=0;
+        var t=this.tt;
+		var F=this.F;
+		var mF=this.mF;
+		
+		s.forEach(function(el,ei){
+			var t1,t0=t[0];
 			for(var i = 0; i < N; i++){
-				r[ri]=new Complex(
-					this.F[i]*(Math.exp(-s[ri].real*t[i+1])*Math.cos(-s[ri].imag*t[i+1])-Math.exp(-s[ri].real*t[i])*Math.cos(-s[ri].imag*t[i])),
-					this.F[i]*(Math.exp(-s[ri].real*t[i+1])*Math.sin(-s[ri].imag*t[i+1])-Math.exp(-s[ri].real*t[i])*Math.sin(-s[ri].imag*t[i]))
-					).add(r[ri]);
+				t1=t[i+1];
+				r[ei]=new Complex(
+					F[i]*(Math.exp(-el.real*t1)*Math.cos(-el.imag*t1)-Math.exp(-el.real*t0)*Math.cos(-el.imag*t0)),
+					F[i]*(Math.exp(-el.real*t1)*Math.sin(-el.imag*t1)-Math.exp(-el.real*t0)*Math.sin(-el.imag*t0))
+					).add(r[ei]);
+				t0=t1;
 			}
-        }
-		for(var ri = 0; ri < s.length; ri++){	
-			nr[ri]=r[ri].copy().abs();
-			err[ri]=(s[ri].copy().mul(-t[N]).exp().mul(this.mF)).abs();
-			ern[ri]=err[ri]/nr[ri];
-			r[ri]=s[ri].copy().inverse().multiply(r[ri].mul(-1));	
-		}
+		});
+		s.forEach(function(el,ei){	
+			nr[ei]=r[ei].copy().abs();
+			err[ei]=(el.copy().mul(-t[N]).exp().mul(mF)).abs();
+			ern[ei]=err[ei]/nr[ei];
+			r[ei]=el.copy().inverse().multiply(r[ei].mul(-1));	
+		});
 		self.err=ern;
 		return {r:r, err:err, ern:ern}
+		/*/for(var ri = 0; ri < s.length; ri++){
+		//	for(var i = 0; i < N; i++){
+		//		r[ri]=new Complex(
+		//			this.F[i]*(Math.exp(-s[ri].real*t[i+1])*Math.cos(-s[ri].imag*t[i+1])-Math.exp(-s[ri].real*t[i])*Math.cos(-s[ri].imag*t[i])),
+		//			this.F[i]*(Math.exp(-s[ri].real*t[i+1])*Math.sin(-s[ri].imag*t[i+1])-Math.exp(-s[ri].real*t[i])*Math.sin(-s[ri].imag*t[i]))
+		//			).add(r[ri]);
+		//	}
+        //}
+		//for(var ri = 0; ri < s.length; ri++){	
+		//	nr[ri]=r[ri].copy().abs();
+		//	err[ri]=(s[ri].copy().mul(-t[N]).exp().mul(this.mF)).abs();
+		//	ern[ri]=err[ri]/nr[ri];
+		//	r[ri]=s[ri].copy().inverse().multiply(r[ri].mul(-1));	
+		//}
+		//self.err=ern;
+		//return {r:r, err:err, ern:ern}/*/
 	}	
 	this.angle=function(l1,lq){
-		if (l1.r.length!=lq.r.length) self.log.send({mu:"Ooops... angle function, call to developer"});
+		if (l1.r.length!=lq.r.length) throw "Error in angle function";
 		var res = [];
 		for (var i = 0; i < l1.r.length; i++){
 			res[i]=lq.r[i].copy().inverse().mul(l1.r[i]).phase();
@@ -140,13 +162,13 @@ function debug_LT(obj){
 	flo=openflot(); flo([{data:toPlot}]);
 }
 function parse_rate(obj, z){
-	var x=[], y=[];
+	var x=[], y=[], name;
 	for (var  i = 0; i < obj.length; i++){
-		if(obj[i].dataType==="Rate time")  {if (obj[i].R!==0&&obj[i].R!=="0") throw "Rates should have R=0"; x=obj[i].data;}
+		if(obj[i].dataType==="Rate time")  {if (obj[i].R!==0&&obj[i].R!=="0") throw "Rates should have R=0"; x=obj[i].data; name=obj[i].wellName;}
 		if(obj[i].dataType==="Rate value") {if (obj[i].R!==0&&obj[i].R!=="0") throw "Rates should have R=0"; y=obj[i].data;}
 	}
 	if (!x||!y) throw "Error in rate parse!";
-	
+	appendCurve(name+" rate",x,y);
 	var lq=new LT(y, x);	
 	return lq.make_fast(z);
 }
@@ -162,12 +184,15 @@ function parse_observers(obj, z){
 			if (x[i].wellName===y[j].wellName) {
 				if (x[i].R!=y[j].R) throw "Wells with similar names must have similar R!";
 				if (x[i].R!=0) lp.push({lp:(new LT(y[j].data, x[i].data)),R:x[i].R,wellName:x[i].wellName});// не учитываем давление на инжекторе
+				if (x[i].R!=0) appendCurve(x[i].wellName+" pressure",x[i].data,y[i].data);
 			}
 		}
 	}
-	for (var  i = 0; i < lp.length; i++){
-		lps[i]={lps:lp[i].lp.make_fast(z),R:lp[i].R,wellName:lp[i].wellName};
-	}
+	lpl=lp.length;
+	lp.forEach(function(el,i){
+		lps[i]={lps:el.lp.make_fast(z),R:el.R,wellName:el.wellName}; 
+		self.log.send({mc:["LT maked pressure "+el.wellName, self.locTic.sec()]});self.log.send({mp:Math.round(25/lpl+75)}); self.locTic=LPC.Tic();
+	});
 	return lps;
 }
 function LT_solve(lps, lqs, z){
@@ -191,9 +216,9 @@ function start_LT_solver(obj){
 			//парсим объект
 			//отдельно обрабатывается курва с закачкой
 			//заносим графики капп для всех остальных обсерверов 
-	var z = (new LT([1], [1])).generate_complex(); 
-	var lqs=parse_rate(obj, z.z); if (!lqs) {throw "Error in rate curve parse!"; }
-	var lps=parse_observers(obj, z.z);
+	var z = (new LT([1], [1])).generate_complex(); self.locTic=LPC.Tic();
+	var lqs=parse_rate(obj, z.z); if (!lqs) {throw "Error in rate curve parse!"; }; self.log.send({mc:["LT maked rate", self.locTic.sec()]}); self.log.send({mp:75}); self.locTic=LPC.Tic();
+	var lps=parse_observers(obj, z.z); self.log.send({mp:90});
 	var kappa_curves=LT_solve(lps, lqs, z.z);
 	save_curves_in_local_memory(kappa_curves, z.td);
 	/*------------------/*/

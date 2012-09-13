@@ -285,6 +285,28 @@ function addKappas(){
 	}
 	addArbitrary(obj);
 }
+function addPressures(){
+	var arr=[], obj=[]; 
+	for (tmp in myGlob.graphArrays) 
+		if (myGlob.graphArrays.hasOwnProperty(tmp)) 
+			if(tmp.search(" pressure")!=-1)
+				arr.push(tmp);
+	for (var i = 0; i < arr.length; i++){
+		obj.push({name:arr[i]});//[{name:'pInj',color:'green'}
+	}
+	addArbitrary(obj);
+}
+function addRate(){
+	var arr=[], obj=[]; 
+	for (tmp in myGlob.graphArrays) 
+		if (myGlob.graphArrays.hasOwnProperty(tmp)) 
+			if(tmp.search(" rate")!=-1)
+				arr.push(tmp);
+	for (var i = 0; i < arr.length; i++){
+		obj.push({name:arr[i],color:'blue'});//[{name:'pInj',color:'green'}
+	}
+	addArbitrary(obj);
+}
 function addArbitrary(graphs){
 	var div = document.getElementById('myView1'); 
 	var divChild=document.createElement('div');

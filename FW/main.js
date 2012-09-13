@@ -124,14 +124,19 @@ function Solver(toSend){
 		self.log.send({unlock:1});self.log.send({alert:e});
 	}
 
-	if (self.lasfile){self.las=newSelecting({corresponding:[4,5,0,1,2,3]});}	
-	if (self.txtfile){self.las=newSelecting({corresponding:[476,477,332,335,476,479]});}
-	//не забывать, что у нагнетательной скважины R=0;
-	var rate=reduse_curve(self.las.curves[0],512,512).cn;self.log.send({aa:["rate", rate]});
-	var pInj=reduse_curve(self.las.curves[1],512,512).cn;self.log.send({aa:["pInj", pInj]});
-	var pObs=reduse_curve(self.las.curves[2],512,512).cn;self.log.send({aa:["pObs", pObs]});	
+	//if (self.lasfile){self.las=newSelecting({corresponding:[4,5,0,1,2,3]});}	
+	//if (self.txtfile){self.las=newSelecting({corresponding:[476,477,332,335,476,479]});}
+	////не забывать, что у нагнетательной скважины R=0;
+	//var rate=reduse_curve(self.las.curves[0],512,512).cn;self.log.send({aa:["rate", rate]});
+	//var pInj=reduse_curve(self.las.curves[1],512,512).cn;self.log.send({aa:["pInj", pInj]});
+	//var pObs=reduse_curve(self.las.curves[2],512,512).cn;self.log.send({aa:["pObs", pObs]});	
 	return {};
 };
+function appendCurve(name,x,y){
+	var pairs=[];
+	for (var i = 0; i<x.length; i++){pairs[i]=[x[i],y[i]]};
+	var curve=reduse_curve(pairs,512,512).cn;self.log.send({aa:[name, curve]});
+}
 function newcontinueProcessingInWorker(opts){
     if(LPC.is_worker()){
 		try{
@@ -214,13 +219,13 @@ function check_table(opts){
 		}
 		return pair;
 	}	
-	function check_presence(o,name){//если не хватает пары
+	function check_presence(o,name){//если не хватает пары||или больше одного раза встречается один и тот же тип у одной скважины
 		for(var i = 0; i < o.length; i++){
 			switch (o[i]){
-				case "Pressure time"  :{var netu=1;for(var j = 0; j < o.length; j++){if(o[j]==="Pressure value"){netu=0;break;}}if (netu) throw name+" must have Pressure value type";break;}
-				case "Pressure value" :{var netu=1;for(var j = 0; j < o.length; j++){if(o[j]==="Pressure time" ){netu=0;break;}}if (netu) throw name+" must have Pressure time type" ;break;}
-				case "Rate time"      :{var netu=1;for(var j = 0; j < o.length; j++){if(o[j]==="Rate value"    ){netu=0;break;}}if (netu) throw name+" must have Rate value type"    ;break;}
-				case "Rate value"     :{var netu=1;for(var j = 0; j < o.length; j++){if(o[j]==="Rate time"     ){netu=0;break;}}if (netu) throw name+" must have Rate time type"     ;break;}
+				case "Pressure time"  :{var netu=1, count=0; for(var j = 0; j < o.length; j++){ if(o[j]==="Pressure value"){ netu=0;count++;}} if (netu) throw name+" must have Pressure value type"; if (count>1) throw name+" must have only one Pressure value type"; break;}
+				case "Pressure value" :{var netu=1, count=0; for(var j = 0; j < o.length; j++){ if(o[j]==="Pressure time" ){ netu=0;count++;}} if (netu) throw name+" must have Pressure time type" ; if (count>1) throw name+" must have only one Pressure time type" ; break;}
+				case "Rate time"      :{var netu=1, count=0; for(var j = 0; j < o.length; j++){ if(o[j]==="Rate value"    ){ netu=0;count++;}} if (netu) throw name+" must have Rate value type"    ; if (count>1) throw name+" must have only one Rate value type"    ; break;}
+				case "Rate value"     :{var netu=1, count=0; for(var j = 0; j < o.length; j++){ if(o[j]==="Rate time"     ){ netu=0;count++;}} if (netu) throw name+" must have Rate time type"     ; if (count>1) throw name+" must have only one Rate time type"     ; break;}
 			}
 		}
 	}
@@ -240,8 +245,10 @@ function check_table(opts){
 function buildInputObjToSolver(opts){
 	var toSend=[];
 	check_table(opts);
+	self.log.send({obj:{opts:opts,curve_names:self.LAS.curve_names}});
 	for (var i = 0; i < opts.rows.rows.length; i++){
-		var ind=-1;for (var ii=0; ii< self.LAS.curve_names.length;ii++){if (self.LAS.curve_names[ii]===opts.rows.rows[i].logName) ind=ii} if(ind===-1) self.log.send({alert:"Ooops..."}); var data=self.LAS.curves[ind];
+	  //var ind=-1;for (var ii=0; ii< self.LAS.curve_names.length;ii++){if (self.LAS.curve_names[ii]===opts.rows.rows[i].logName) ind=ii} if(ind===-1) throw "Sorry, names conflict"; var data=self.LAS.curves[ind];
+		var ind=-1;for (var ii=0; ii< self.LAS.curve_names.length;ii++){if (self.LAS.curve_names[ii].substr(0,self.LAS.curve_names[ii].length-1)===opts.rows.rows[i].logName.substr(0,self.LAS.curve_names[ii].length-1)) {ind=ii;break;}}   if(ind===-1) throw "Sorry, names conflict"; var data=self.LAS.curves[ind];
 		var unv=[];var tmp = opts.rows.rows[i].unvalids.match(/((-|)\d*\.*\d+)(\t*|\s*|\n)/g) ;if (tmp&&tmp.length>1)  for (var ii = 0; ii < tmp.length/2 ;ii++){ unv.push({x0:tmp[2*ii]-0,x1:tmp[2*ii+1]-0  });   }
 		toSend[i]={//"[{"data":[[0,1]],"R":0.1,"unvalids":[],"logname":"inj rate","datatype":"injection rate","wellname":"wellname-1"},{"data":[[0,1]],"R":496,"unvalids":[],"logname":"obs press","datatype":"observer press","wellname":"wellname-2"}]"
 			data:data,

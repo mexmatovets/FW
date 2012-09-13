@@ -209,11 +209,13 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 </div>
 				<div title="View manager">
                     <div style="padding:20px;overflow:hidden;">
-						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'rate',color:'blue'}])" >Add rate</a>	    
+						<!--<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'rate',color:'blue'}])" >Add rate</a>	    
 						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'}])" >Add press on injector</a>
 						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pObs',color:'red'}])" >Add press on observer</a>
 						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'},{name:'pObs',color:'red'}])" >Add presses</a>
-						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'},{name:'pObs',color:'red'},{name:'rate',color:'blue'}])" >Add all three</a>
+						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'},{name:'pObs',color:'red'},{name:'rate',color:'blue'}])" >Add all three</a>-->
+						<a href="#" class="easyui-linkbutton" onclick="addRate()" >Show rate</a>
+						<a href="#" class="easyui-linkbutton" onclick="addPressures()" >Show pressures</a>
 						<a href="#" class="easyui-linkbutton" onclick="addKappas()" >Show kappas</a>
                     </div>
                 </div>
