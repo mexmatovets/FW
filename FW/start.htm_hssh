@@ -325,9 +325,9 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 $("#tabs").tabs();
 				if (1){
 					var data ={"total":28,"rows":[
-						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"0 100 200 400 500 1000",	"index":1},
+						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"",							"index":1},
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},
-						{"wellName":"Well 2839","logName":"Well_2839.pressure.time   .S                                    ","productid":"Pressure time", "radius":496,"unvalids":"",							"index":3},
+						{"wellName":"Well 2839","logName":"Well_2839.pressure.time   .S                                    ","productid":"Pressure time", "radius":496,"unvalids":"0 10 70 100",				"index":3},
 						{"wellName":"Well 2839","logName":"Well_2839.pressure.value  .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":4},
 						{"wellName":"Well 3110","logName":"Well_3110.rate.time  	  .S                                    ","productid":"Rate time",     "radius":0,  "unvalids":"",							"index":5},
 						{"wellName":"Well 3110","logName":"Well_3110.rate.value  	  .M3/DAY                               ","productid":"Rate value",    "radius":0,  "unvalids":"",							"index":6}
@@ -336,12 +336,12 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 				}
 				if (0){
 					var data ={"total":28,"rows":[
-						{"wellName":"Well 3110","logName":"3110.Days",						"productid":"Pressure time", "radius":0,  "unvalids":"0 100 200 400 500 1000",	"index":1},
+						{"wellName":"Well 3110","logName":"3110.Days",						"productid":"Pressure time", "radius":0,  "unvalids":"",						"index":1},
 						{"wellName":"Well 3110","logName":"3110.\"Water Injected Rate\"",	"productid":"Pressure value","radius":0,  "unvalids":"",						"index":2},
-						{"wellName":"Well 57",  "logName":"57.Days",						"productid":"Pressure time", "radius":496,"unvalids":"",						"index":3},
+						{"wellName":"Well 57",  "logName":"57.Days",						"productid":"Pressure time", "radius":496,"unvalids":"0 10 70 100",				"index":3},
 						{"wellName":"Well 57",  "logName":"57.\"Bulk Pressure\"\r",			"productid":"Pressure value","radius":496,"unvalids":"",						"index":4},
 						{"wellName":"Well 3110","logName":"3110.Days",						"productid":"Rate time", 	 "radius":0,  "unvalids":"",						"index":5},
-						{"wellName":"Well 3110","logName":"3110.\"Bulk Pressure\"\r",			"productid":"Rate value",    "radius":0,  "unvalids":"",						"index":6}
+						{"wellName":"Well 3110","logName":"3110.\"Bulk Pressure\"\r",		"productid":"Rate value",    "radius":0,  "unvalids":"",						"index":6}
 					]}; 
 					$('#cartcontent').datagrid('loadData', data);
 				}				

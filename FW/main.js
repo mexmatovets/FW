@@ -140,13 +140,15 @@ function appendCurve(name,x,y){
 function newcontinueProcessingInWorker(opts){
     if(LPC.is_worker()){
 		try{
-			if (self.lasfile){									self.log.send({mu:"data reading"});self.tic=LPC.Tic();self.log.send({mp:30});		
+			if (self.lasfile){									self.tic=LPC.Tic();		
+				check_table(opts);								self.log.send({mu:"data reading"});self.log.send({mc:["table checked", self.tic.sec()]});self.tic=LPC.Tic();self.log.send({mp:30});
 				self.LAS=new DataObject(lasfile).las;			self.log.send({mc:["data reading is OK!", self.tic.sec()]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
 				var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec()]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
 				var res = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
 				return res;
 			}
-			if (self.txtfile){									self.log.send({mu:"data reading"});self.tic=LPC.Tic();self.log.send({mp:30});
+			if (self.txtfile){									self.tic=LPC.Tic();	
+				check_table(opts);								self.log.send({mu:"data reading"});self.log.send({mc:["table checked", self.tic.sec()]});self.tic=LPC.Tic();self.log.send({mp:30});
 				self.LAS=textReader();							self.log.send({mc:["data reading is OK!", self.tic.sec()]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
 				var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec()]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
 				var res = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
@@ -244,11 +246,9 @@ function check_table(opts){
 }
 function buildInputObjToSolver(opts){
 	var toSend=[];
-	check_table(opts);
-	self.log.send({obj:{opts:opts,curve_names:self.LAS.curve_names}});
+	//self.log.send({obj:{opts:opts,curve_names:self.LAS.curve_names}});
 	for (var i = 0; i < opts.rows.rows.length; i++){
-	  //var ind=-1;for (var ii=0; ii< self.LAS.curve_names.length;ii++){if (self.LAS.curve_names[ii]===opts.rows.rows[i].logName) ind=ii} if(ind===-1) throw "Sorry, names conflict"; var data=self.LAS.curves[ind];
-		var ind=-1;for (var ii=0; ii< self.LAS.curve_names.length;ii++){if (self.LAS.curve_names[ii].substr(0,self.LAS.curve_names[ii].length-1)===opts.rows.rows[i].logName.substr(0,self.LAS.curve_names[ii].length-1)) {ind=ii;break;}}   if(ind===-1) throw "Sorry, names conflict"; var data=self.LAS.curves[ind];
+		var ind=-1;for (var ii=0; ii< self.LAS.curve_names.length;ii++){if (self.LAS.curve_names[ii].substr(0,self.LAS.curve_names[ii].length-1)===opts.rows.rows[i].logName.substr(0,self.LAS.curve_names[ii].length-1)) {ind=ii;break;} }  if(ind===-1) throw "Sorry, names conflict"; var data=self.LAS.curves[ind];
 		var unv=[];var tmp = opts.rows.rows[i].unvalids.match(/((-|)\d*\.*\d+)(\t*|\s*|\n)/g) ;if (tmp&&tmp.length>1)  for (var ii = 0; ii < tmp.length/2 ;ii++){ unv.push({x0:tmp[2*ii]-0,x1:tmp[2*ii+1]-0  });   }
 		toSend[i]={//"[{"data":[[0,1]],"R":0.1,"unvalids":[],"logname":"inj rate","datatype":"injection rate","wellname":"wellname-1"},{"data":[[0,1]],"R":496,"unvalids":[],"logname":"obs press","datatype":"observer press","wellname":"wellname-2"}]"
 			data:data,

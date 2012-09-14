@@ -160,6 +160,20 @@ function debug_LT(obj){
 	toPlot=[]; for (var i = 0; i < z.td.length; i++) toPlot[i]=[z.td[i],self.kappa_et1[i]];
 	flo=openflot(); flo([{data:toPlot}]);
 }
+function avoid_unvalids(data_x,data_y,unv){
+	if(1){	
+		var data_o = interp4({x:data_x,y:data_y}, data_x.length, unv);
+		var x=[], y=[];
+		for (var i = 0; i < data_o.cn.length; i++){
+			x[i]=data_o.cn[i][0];
+			y[i]=data_o.cn[i][1];
+		}
+		return {x:x,y:y};
+	}
+	if(0){
+		return {x:data_x,y:data_y};
+	}
+}
 function parse_rate(obj, z){
 	var x=[], y=[], name;
 	for (var  i = 0; i < obj.length; i++){
@@ -172,9 +186,10 @@ function parse_rate(obj, z){
 	return lq.make_fast(z);
 }
 function parse_observers(obj, z){
+    var avoidTime=0;
 	var x=[], y=[], lp=[], lps=[];
 	for (var  i = 0; i < obj.length; i++){
-		if(obj[i].dataType==="Pressure time")  x.push({data:obj[i].data, wellName:obj[i].wellName, R:obj[i].R});
+		if(obj[i].dataType==="Pressure time")  x.push({data:obj[i].data, wellName:obj[i].wellName, R:obj[i].R, unvalids:obj[i].unvalids});
 		if(obj[i].dataType==="Pressure value") y.push({data:obj[i].data, wellName:obj[i].wellName, R:obj[i].R});
 	}
 	if (!x||!y||x.length!=y.length) throw "Error in pressure parse!";
@@ -182,11 +197,13 @@ function parse_observers(obj, z){
 		for (var  j = 0; j < x.length; j++){
 			if (x[i].wellName===y[j].wellName) {
 				if (x[i].R!=y[j].R) throw "Wells with similar names must have similar R!";
+				if (x[i].R!=0&&x[i].unvalids) {var tmpT=LPC.Tic(); var resUnv=avoid_unvalids(x[i].data, y[j].data, x[i].unvalids);x[i].data=resUnv.x;y[j].data=resUnv.y; avoidTime+=tmpT.sec();}
 				if (x[i].R!=0) lp.push({lp:(new LT(y[j].data, x[i].data)),R:x[i].R,wellName:x[i].wellName});// не учитываем давление на инжекторе
 				if (x[i].R!=0) appendCurve(x[i].wellName+" pressure",x[i].data,y[i].data);
 			}
 		}
 	}
+	self.log.send({mc:["Time for interpolation", avoidTime]});	
 	lpl=lp.length;
 	lp.forEach(function(el,i){
 		lps[i]={lps:el.lp.make_fast(z),R:el.R,wellName:el.wellName}; 
@@ -217,12 +234,11 @@ function start_LT_solver(obj){
 			//заносим графики капп для всех остальных обсерверов 
 	var z = (new LT([1], [1])).generate_complex(); self.locTic=LPC.Tic();
 	var lqs=parse_rate(obj, z.z); if (!lqs) {throw "Error in rate curve parse!"; }; self.log.send({mc:["LT maked rate", self.locTic.sec()]}); self.log.send({mp:75}); self.locTic=LPC.Tic();
-	var lps=parse_observers(obj, z.z); self.log.send({mp:90});
+	var lps=parse_observers(obj, z.z); 
 	var kappa_curves=LT_solve(lps, lqs, z.z);
 	save_curves_in_local_memory(kappa_curves, z.td);
 	/*------------------/*/
 }
-
 
 
 
