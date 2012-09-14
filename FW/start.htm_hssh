@@ -7,13 +7,12 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 <head>
 	<meta Content-Type="text/html; charset=UTF-8">
     <title>Border Layout - jQuery EasyUI Demo</title>
-  <!--[if 1=1]>-->
-    <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
-    <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
-    <script type="text/javascript" src="http://jquery-easyui.googlecode.com/svn-history/r537/trunk/jquery-1.7.1.min.js"></script>
-    <script language="javascript" type="text/javascript" src="https://raw.github.com/flot/flot/master/jquery.js"></script>
-    <script type="text/javascript" src="http://jquery-easyui.googlecode.com/svn-history/r537/trunk/jquery.easyui.min.js"></script>
-  <!--<![endif]-->
+    <link rel="stylesheet" type="text/css" href="../scripts/easyui.css">			<!--<link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">-->
+    <link rel="stylesheet" type="text/css" href="../scripts/icon.css">				<!--<link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">-->
+    <script type="text/javascript" src="../scripts/jquery-1.7.1.min.js"></script>	<!--<script type="text/javascript" src="http://jquery-easyui.googlecode.com/svn-history/r537/trunk/jquery-1.7.1.min.js"></script>-->
+    <script type="text/javascript" src="../scripts/jquery.min.js"></script>			<!--<script language="javascript" type="text/javascript" src="https://raw.github.com/flot/flot/master/jquery.js"></script>-->
+    <script type="text/javascript" src="../scripts/jquery.easyui.min.js"></script>	<!--<script type="text/javascript" src="http://jquery-easyui.googlecode.com/svn-history/r537/trunk/jquery.easyui.min.js"></script>-->
+
     <!--<script language="javascript" type="text/javascript" src="https://raw.github.com/flot/flot/master/jquery.flot.js"></script>
 	
 	
@@ -29,7 +28,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 <script type="text/javascript" src="../scripts/Base64Bin.js"></script>
 <script type="text/javascript" src="../scripts/meshutils.js"></script>
 <script type="text/javascript" src="../scripts/jquery.blockUI.js"></script>
-<script src="../scripts/jquery.filestyle.js" type="text/javascript"></script>
+<script type="text/javascript" src="../scripts/jquery.filestyle.js" ></script>
 
 <script language="javascript" type="text/javascript" src="../flot/jquery.flot.js"></script>
 <script language="javascript" type="text/javascript" src="../flot/jquery.flot.crosshair.js"></script>
@@ -198,11 +197,6 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 </div>
 				<div title="View manager">
                     <div style="padding:20px;overflow:hidden;">
-						<!--<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'rate',color:'blue'}])" >Add rate</a>	    
-						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'}])" >Add press on injector</a>
-						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pObs',color:'red'}])" >Add press on observer</a>
-						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'},{name:'pObs',color:'red'}])" >Add presses</a>
-						<a href="#" class="easyui-linkbutton" onclick="addArbitrary([{name:'pInj',color:'green'},{name:'pObs',color:'red'},{name:'rate',color:'blue'}])" >Add all three</a>-->
 						<a href="#" class="easyui-linkbutton" onclick="addRate()" >Show rate</a>
 						<a href="#" class="easyui-linkbutton" onclick="addPressures()" >Show pressures</a>
 						<a href="#" class="easyui-linkbutton" onclick="addKappas()" >Show kappas</a>
