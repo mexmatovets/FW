@@ -37,43 +37,40 @@ LT=function(F,t){
 	this.make_fast=function(s){
 		var nr=[], err=[], ern=[];
         var N=this.NL;
-        var r=[]; for(var i = 0; i < s.length; i++) r[i]=0;
+        var r=[]; for(var i = 0; i < s.length; i++) r[i]=new Complex();
         var t=this.tt;
 		var F=this.F;
 		var mF=this.mF;
-		var t1,t0=t[0],Fi,er1,er0,ei1,ei0;		
-		s.forEach(function(el,ei){
+		var t1,t0=t[0],Fi,er1,er0,ei1,ei0,el,sl=s.length;		
+		for(var ei = 0; ei < sl; ei++){
+			el=s[ei];
 			for(var i = 0; i < N; i++){
 				t1=t[i+1];Fi=F[i];er1=Math.exp(-el.real*t1);er0=Math.exp(-el.real*t0);ei1=-el.imag*t1;ei0=-el.imag*t0;
-				r[ei]=new Complex(
-					Fi*(er1*Math.cos(ei1)-er0*Math.cos(ei0)),
-					Fi*(er1*Math.sin(ei1)-er0*Math.sin(ei0))
-					).add(r[ei]);
+				r[ei].add([Fi*(er1*Math.cos(ei1)-er0*Math.cos(ei0)),Fi*(er1*Math.sin(ei1)-er0*Math.sin(ei0))]);
 				t0=t1;
 			}
-		});
-		s.forEach(function(el,ei){	
-			nr[ei]=r[ei].copy().abs();
-			err[ei]=(el.copy().mul(-t[N]).exp().mul(mF)).abs();
-			ern[ei]=err[ei]/nr[ei];
-			r[ei]=el.copy().inverse().multiply(r[ei].mul(-1));	
-		});
+		}
+		for(var ri = 0; ri < sl; ri++){	
+			nr[ri]=r[ri].copy().abs();
+			err[ri]=(s[ri].copy().mul(-t[N]).exp().mul(this.mF)).abs();
+			ern[ri]=err[ri]/nr[ri];
+			r[ri]=s[ri].copy().inverse().multiply(r[ri].mul(-1));	
+		}		
 		self.err=ern;
 		return {r:r, err:err, ern:ern}
-		/*/for(var ri = 0; ri < s.length; ri++){
-		//	for(var i = 0; i < N; i++){
-		//		r[ri]=new Complex(
-		//			this.F[i]*(Math.exp(-s[ri].real*t[i+1])*Math.cos(-s[ri].imag*t[i+1])-Math.exp(-s[ri].real*t[i])*Math.cos(-s[ri].imag*t[i])),
-		//			this.F[i]*(Math.exp(-s[ri].real*t[i+1])*Math.sin(-s[ri].imag*t[i+1])-Math.exp(-s[ri].real*t[i])*Math.sin(-s[ri].imag*t[i]))
-		//			).add(r[ri]);
-		//	}
-        //}
-		//for(var ri = 0; ri < s.length; ri++){	
-		//	nr[ri]=r[ri].copy().abs();
-		//	err[ri]=(s[ri].copy().mul(-t[N]).exp().mul(this.mF)).abs();
-		//	ern[ri]=err[ri]/nr[ri];
-		//	r[ri]=s[ri].copy().inverse().multiply(r[ri].mul(-1));	
-		//}
+		/*/		//s.forEach(function(el,ei){
+			//t.forEach(function(t1,ti){if(ti===0) return;
+			//	Fi=F[ti-1];er1=Math.exp(-el.real*t1);er0=Math.exp(-el.real*t0);ei1=-el.imag*t1;ei0=-el.imag*t0;
+			//	r[ei].add([Fi*(er1*Math.cos(ei1)-er0*Math.cos(ei0)),Fi*(er1*Math.sin(ei1)-er0*Math.sin(ei0))]);
+			//	t0=t1;
+			//})
+		//});/*/
+		//s.forEach(function(el,ei){	
+		//	nr[ei]=r[ei].copy().abs();
+		//	err[ei]=(el.copy().mul(-t[N]).exp().mul(mF)).abs();
+		//	ern[ei]=err[ei]/nr[ei];
+		//	r[ei]=el.copy().inverse().multiply(r[ei].mul(-1));	
+		//});
 		//self.err=ern;
 		//return {r:r, err:err, ern:ern}/*/
 	}		

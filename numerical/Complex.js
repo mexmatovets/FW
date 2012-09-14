@@ -59,8 +59,14 @@ Complex.prototype.add = function(operand) {
 		real = operand.real;
 		imag = operand.imag;
 	} else {
-		real = Number(operand);
-		imag = 0;
+		if (operand instanceof Array){
+			real=operand[0];
+			imag=operand[1];
+		}
+		else{
+			real = Number(operand);
+			imag = 0;
+		}
 	}
 	this.real += real;
 	this.imag += imag;
