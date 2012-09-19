@@ -312,10 +312,12 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 					var data ={"total":28,"rows":[
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"",							"index":1},
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},
-						{"wellName":"Well 2839","logName":"Well_2839.pressure.time   .S                                    ","productid":"Pressure time", "radius":496,"unvalids":"0 10 70 100",				"index":3},
-						{"wellName":"Well 2839","logName":"Well_2839.pressure.value  .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":4},
+						{"wellName":"Well 2839","logName":"Well_2839.pressure.time   .S                                    ","productid":"Pressure time", "radius":464,"unvalids":"0 10 70 100",				"index":3},
+						{"wellName":"Well 2839","logName":"Well_2839.pressure.value  .Atm                                  ","productid":"Pressure value","radius":464,"unvalids":"",							"index":4},
 						{"wellName":"Well 3110","logName":"Well_3110.rate.time  	  .S                                    ","productid":"Rate time",     "radius":0,  "unvalids":"",							"index":5},
-						{"wellName":"Well 3110","logName":"Well_3110.rate.value  	  .M3/DAY                               ","productid":"Rate value",    "radius":0,  "unvalids":"",							"index":6}
+						{"wellName":"Well 3110","logName":"Well_3110.rate.value  	  .M3/DAY                               ","productid":"Rate value",    "radius":0,  "unvalids":"",							"index":6},
+						{"wellName":"Well 2818","logName":"Well_2818.pressure.time	  .S	                                ","productid":"Pressure time", "radius":496,"unvalids":"",							"index":7},
+						{"wellName":"Well 2818","logName":"Well_2818.pressure.value  .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":8}									
 					]}; 
 					$('#cartcontent').datagrid('loadData', data);
 				}

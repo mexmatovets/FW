@@ -23,7 +23,7 @@ myGlobalVariables=function (){
 	}/*/
 	this.showGraph=function(idGraph){
 		var tmp = openflot();
-		tmp(closuredData.idGraphs[idGraph]);//[{data:..,color:..,label:..}..]
+		tmp(closuredData.idGraphs[idGraph],{series:{lines:{ show: true }},crosshair: { mode: "x" },grid: { hoverable: true, autoHighlight: false }});//[{data:..,color:..,label:..}..]
 	}
 	this.appendIdGraph=function(idGraph, obj){
 		closuredData.idGraphs[idGraph]=obj;

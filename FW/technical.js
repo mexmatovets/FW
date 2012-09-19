@@ -313,7 +313,13 @@ function addArbitrary(graphs){
 	divChild.setAttribute('id','placeholderGr'+myGlob.count);	
 	divChild.setAttribute('style','width:400px;height:300px');
 	// openflot event
-	var toShow=[]; for (var i = 0; i < graphs.length; i++){ toShow.push({data:myGlob.graphArrays[graphs[i].name],color:graphs[i].color,label:graphs[i].name})}
+	var toShow=[]; for (var i = 0; i < graphs.length; i++){ 
+		toShow.push({
+			data:myGlob.graphArrays[graphs[i].name],
+			color:graphs[i].color,
+			label:graphs[i].name
+			})
+	};
 	//function divDblClick(toShow){		flo=openflot(); flo(toShow)	}
 	divChild.ondblclick = function (){		
 		myGlob.showGraph("#"+this.id);

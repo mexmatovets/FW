@@ -50,7 +50,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
     { 
 		var tic=new Date();
         var args=jsutils.to_array(arguments);
-		
+		for (var i = 0; i < args[0].length; i++ ){args[0][i].label=args[0][i].label+" = -0.00000"}
 		var plot_obj = $.plot( $("#placeholder"), args[0],args[1] );
 		$("#placeholder").bind("plothover", function (evt, pos, item) {
 			latestPosition = pos;
@@ -103,6 +103,8 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
 				legends.eq(i).text(series.label.replace(/=.*/, "= " + y.toFixed(2)));
 			}
 		}	
+		//$(pl).draggable().resizable();
+		
 		//$(pl).bind({hover:  function (event, pos, item) {
         //latestPosition = pos;
         //if (!updateLegendTimeout)
@@ -126,15 +128,15 @@ function init() {
     }	
     
 	plot([
-        { data: sin, label: "sin(x) = -0.00"  },
-        { data: cos, label: "cos(x) = -0.00"  },
+        { data: sin, label: "sin(x)"  },
+        { data: cos, label: "cos(x)"  },
     ],	{
                             series: {
                                 lines: { show: true }
                             },
                             crosshair: { mode: "x" },
-                            grid: { hoverable: true, autoHighlight: false },
-                            yaxis: { min: -1.2, max: 1.2 }
+                            grid: { hoverable: true, autoHighlight: false }//,
+                            //yaxis: { min: -1.2, max: 1.2 }
                         }
 	
 	);
