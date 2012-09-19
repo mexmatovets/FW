@@ -7,12 +7,16 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Flotter</title>
-    <!--<link href="layout.css" rel="stylesheet" type="text/css">-->
-    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
-    <!--<script language="javascript" type="text/javascript" src="../tmp/Drag.js"></script>-->
-    <script language="javascript" type="text/javascript" src='../scripts/jquery-1.7.1.js'></script>
-    <script language="javascript" type="text/javascript" src='../scripts/jquery.blockUI.js'></script>
+	<link rel="stylesheet" type="text/css" href="../scripts/easyui.css">	
+    <link rel="stylesheet" type="text/css" href="../scripts/icon.css">
+    <<script language="javascript" type="text/javascript" src='../scripts/jquery-1.7.1.min.js'></script>
+    <script language="javascript" type="text/javascript" src="../scripts/jquery.easyui.min.js"></script>
     <script language="javascript" type="text/javascript" src="../scripts/$require.js"></script>
+	<script language="javascript" type="text/javascript" src="../scripts/jsutils.js"></script>
+	<script language="javascript" type="text/javascript" src="../scripts/jquery.blockUI.js"></script>
+	<script language="javascript" type="text/javascript" src="../scripts/jquery.min.js"></script>			
+    <script language="javascript" type="text/javascript" src="../flot/jquery.flot.js"></script>
+	<script language="javascript" type="text/javascript" src="../flot/jquery.flot.crosshair.js"></script>
     <style type="text/css">
         html, body {
             height: 100%; /* make the percentage height on placeholder work */
@@ -24,196 +28,184 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
     </style>
 </head>
 <body>
-<input type="button"  value="@" style="position:fixed;top:0;right:0;" onclick="set_range()"/>
 
-<div id="idcaption"><center> flotter</div>
-<div id="placeholder" style="width:95%;height:95%;"></div>
+<div class="easyui-layout" style="width:100%;height:100%;">  
+    <div region="west" split="true" title="Navigator" style="width:150px;">  
+        <p style="padding:5px;margin:0;">Select language:</p>  
+        <ul>  
+            <li><a href="javascript:void(0)" onclick="showcontent('java')">Java</a></li>  
+            <li><a href="javascript:void(0)" onclick="showcontent('cshape')">C#</a></li>  
+            <li><a href="javascript:void(0)" onclick="showcontent('vb')">VB</a></li>  
+            <li><a href="javascript:void(0)" onclick="showcontent('erlang')">Erlang</a></li>  
+        </ul>  
+    </div>  
+    <div id="content" region="center" title="Language" style="padding:5px;">  
+		<div id="placeholder" style="width:95%;height:95%;"></div>	
+    </div>  
+</div>
 
-<p class="message"></p>
+<script type="text/javascript">
 
-
-<script id='ffi'>
-    $require.lm=0
-    $require('../scripts/jsutils.js',"../flot/jquery.flot.js","../flot/jquery.flot.resize.js","../flot/jquery.flot.selection.js","../flot/jquery.flot.crosshair.js","../flot/jquery.colorhelpers.js" );
-    if(!self.LPC) $require('../scripts/LPC.js');
-    if(0)
-    {
-        $require('../scripts/flot.js')
-        $require('../numerical/Spec_Func/expint.js');
-
-        ei=function(n,t){  return (t>0)?SpecFunctions.expint(n,t):0 }
-        aa=[];for(var f=0.001;f<10;f+=0.001){aa.push([f,ei(1,f)])  }
-        ss=document.getElementsByTagName('script')
-    }
-</script>
-<script id='isc' type="text/javascript" defer async=true>
-    var plot_obj,placeholder,data,nofirts;
-
-    console.log('isc...')
-    function asyn( fu)
-    {
-        setTimeout(fu,50);
-    }
-
-    function plot(fdata,fopts)
-    {
-        var tic=LPC.Tic();
-
-        if(fopts&&fopts.caption)
-        {
-            var el=$("#idcaption")[0];
-            el.innerHTML='<'+'center'+'>'+fopts.caption;
-
-        }
-
-        console.time('plot:')
-        tic.start();
-        $.blockUI('repaint..')
-        var plotz,options,data;
-        placeholder = $("#placeholder");
-        var pf= $.plot;
-        /*	
-         placeholder.bind("plotselected", function (event, ranges) {
-         // clamp the zooming to prevent eternal zoom
-         if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
-         ranges.xaxis.to = ranges.xaxis.from + 0.00001;
-         if (ranges.yaxis.to - ranges.yaxis.from < 0.00001)
-         ranges.yaxis.to = ranges.yaxis.from + 0.00001;
-
-         function getData(from,to){
-         var dz=[]
-         data.forEach(function(v){
-
-         }		  
-         )
-         }
-         // do the zooming
-         plotz = $.plot($("#placeholder"), getData(ranges.xaxis.from, ranges.xaxis.to),
-         $.extend(true, {}, options, {
-         xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
-         yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
-         }));
-
-
-
-         // don't fire event on the overview to prevent eternal loop
-         //overview.setSelection(ranges, true);
-         });
-         */
+	function plot(fdata,fopts)
+    { 
+		var tic=new Date();
         var args=jsutils.to_array(arguments);
-        args.unshift(placeholder);
-        plot_obj =pf.apply($,args);
-        self.data=data=plot_obj.getData();
-        self.options=options=plot_obj.getOptions();
-
-        $.unblockUI()
-        console.timeEnd('plot:')
-        return tic.sec();
+		
+		var plot_obj = $.plot( $("#placeholder"), args[0],args[1] );
+		$("#placeholder").bind("plothover", function (evt, pos, item) {
+			latestPosition = pos;
+			if (!updateLegendTimeout)
+				updateLegendTimeout = setTimeout(updateLegend, 50);
+		});
+		
+		//plot_obj=$.plot($("#placeholder"), args[0],args[1]);
+		////$.my_legend({},args);
+		//
+		var time = new Date() - tic;
+        //$.unblockUI();
+		
+		var pl="#placeholder";
+		var legends = $(pl+" .legendLabel");
+		legends.each(function () {
+			// fix the widths so they don't jump around
+			$(this).css('width', $(this).width());
+		});
+		var updateLegendTimeout = null;
+		var latestPosition = null;
+		function updateLegend() {
+			updateLegendTimeout = null;
+			
+			var pos = latestPosition;
+			
+			var axes = plot_obj.getAxes();
+			if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
+				pos.y < axes.yaxis.min || pos.y > axes.yaxis.max)
+				return;
+        
+			var i, j, dataset = plot_obj.getData();
+			for (i = 0; i < dataset.length; ++i) {
+				var series = dataset[i];
+        
+				// find the nearest points, x-wise
+				for (j = 0; j < series.data.length; ++j)
+					if (series.data[j][0] > pos.x)
+						break;
+				
+				// now interpolate
+				var y, p1 = series.data[j - 1], p2 = series.data[j];
+				if (p1 == null)
+					y = p2[1];
+				else if (p2 == null)
+					y = p1[1];
+				else
+					y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+        
+				legends.eq(i).text(series.label.replace(/=.*/, "= " + y.toFixed(2)));
+			}
+		}	
+		//$(pl).bind({hover:  function (event, pos, item) {
+        //latestPosition = pos;
+        //if (!updateLegendTimeout)
+        //    updateLegendTimeout = setTimeout(updateLegend, 50);
+		//}
+		//});
+        return  time; //msec		
+        //$.blockUI({ message: '<img src="../scripts/images/wait27.gif" /> '+ "loading" });
     }
-    //$(document).ready(
-    //asyn
-    function set_range(xmin,xmax,ymin,ymax)
-    {
-
-        var data=plot_obj.getData();
-        data.forEach(function(d){
-            var ox=d.xaxis.options,oy=d.yaxis.options;
-            ox.min=xmin
-            ox.max=xmax
-            oy.min=ymin
-            oy.max=ymax
-
-        })
-
-        plot_obj.clearSelection();
-        plot_obj.setupGrid();
-        plot_obj.draw();
-
-    }
-
-    function init() {
-
-        nofirts=1
-
-        console.log('$ JQ...')
-        d1 = [];
-        for (var i = 0; i < 14; i += 0.5)
-            d1.push([i, Math.sin(i)]);
-
-        d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
-        d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
-
-        placeholder = $("#placeholder");
-
-        //
-        //if(parent!=window)
-        //{
-            //plot_obj = $.plot(placeholder, []);
-        //    $.blockUI({message:'wait data ...'});
-        //}
-        //else plot_obj = $.plot(placeholder, [d1, d2, d3]);
-
-        // the plugin includes a jQuery plugin for adding resize events to
-        // any element, let's just add a callback so we can display the
-        // placeholder size
-//	
-
-
-        placeholder.bind('mouseup', function (e) {
-            if(e.button==2)
-            {
-                set_range();
-            }
-        })
-
-
-        placeholder.bind("plotselected", function (event, ranges) {
-            // clamp the zooming to prevent eternal zoom
-            if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
-                ranges.xaxis.to = ranges.xaxis.from + 0.00001;
-            if (ranges.yaxis.to - ranges.yaxis.from < 0.00001)
-                ranges.yaxis.to = ranges.yaxis.from + 0.00001;
-            console.log('ranges',ranges)
-            // do the zooming
-            /*
-             $.plot($("#placeholder"), getData(),
-             $.extend(true, {}, options, {
-             xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
-             yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
-             }));
-             */
-
-            // don't fire event on the overview to prevent eternal loop
-            //overview.setSelection(ranges, true);
-
-
-            /*
-             var data=plot_obj.getData();
-             data.forEach(function(d){
-             var ox=d.xaxis.options,oy=d.xaxis.options;
-             ox.min=ranges.xaxis.from
-             ox.max=ranges.xaxis.to
-             oy.min=ranges.yaxis.from
-             oy.max=ranges.yaxis.to
-
-             })
-             plot_obj.clearSelection();
-             plot_obj.setupGrid();
-             plot_obj.draw();
-             */
-            set_range(ranges.xaxis.from,ranges.xaxis.to,ranges.yaxis.from,ranges.yaxis.to)
-        });
-        placeholder.resize(function () {
-            //$(".message").text();
-            var s="plot size is  " + $(this).width() + "x" + $(this).height() + " pixels"
-            console.log(s)
-
-        });
-
-    };
-    //window.onload=function(){asyn(init)};
-    init();
 </script>
 
+<script type="text/javascript">
+function init() {
+    var d1 = [];for (var i = 0; i < Math.PI * 2; i += 0.25)d1.push([i, Math.sin(i)]);   
+    var d2 = [];for (var i = 0; i < Math.PI * 2; i += 0.25)d2.push([i, Math.cos(i)]);
+	var d3 = [];for (var i = 0; i < Math.PI * 2; i += 0.1 )d3.push([i, Math.tan(i)]);
+    var sin = [], cos = [];
+    for (var i = 0; i < 14; i += 0.1) {
+        sin.push([i, Math.sin(i)]);
+        cos.push([i, Math.cos(i)]);
+    }	
+    
+	plot([
+        { data: sin, label: "sin(x) = -0.00"  },
+        { data: cos, label: "cos(x) = -0.00"  },
+    ],	{
+                            series: {
+                                lines: { show: true }
+                            },
+                            crosshair: { mode: "x" },
+                            grid: { hoverable: true, autoHighlight: false },
+                            yaxis: { min: -1.2, max: 1.2 }
+                        }
+	
+	);
+};	
+//window.onload=init;
+</script>
+<script type="text/javascript">
+//$(function my_legend(f, obj) {
+//	pl="#placeholder";
+//    var sin = [], cos = [];
+//    for (var i = 0; i < 14; i += 0.1) {
+//        sin.push([i, Math.sin(i)]);
+//        cos.push([i, Math.cos(i)]);
+//    }
+//	obj||(obj=[])
+//	obj[0]||(obj[0]=[ { data: sin, label: "sin(x) = -0.00"},{ data: cos, label: "cos(x) = -0.00" } ])
+//	obj[1]||(obj[1]={		series: {
+//                                lines: { show: true }
+//                            },
+//                            crosshair: { mode: "x" },
+//                            grid: { hoverable: true, autoHighlight: false },
+//                            yaxis: { min: -1.2, max: 1.2 }                   
+//	})
+//    plot_obj = $.plot($(pl),obj[0], obj[1]);
+//    var legends = $(pl+" .legendLabel");
+//    legends.each(function () {
+//        // fix the widths so they don't jump around
+//        $(this).css('width', $(this).width());
+//    });
+//
+//    var updateLegendTimeout = null;
+//    var latestPosition = null;
+//    
+//    function updateLegend() {
+//        updateLegendTimeout = null;
+//        
+//        var pos = latestPosition;
+//        
+//        var axes = plot_obj.getAxes();
+//        if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
+//            pos.y < axes.yaxis.min || pos.y > axes.yaxis.max)
+//            return;
+//
+//        var i, j, dataset = plot_obj.getData();
+//        for (i = 0; i < dataset.length; ++i) {
+//            var series = dataset[i];
+//
+//            // find the nearest points, x-wise
+//            for (j = 0; j < series.data.length; ++j)
+//                if (series.data[j][0] > pos.x)
+//                    break;
+//            
+//            // now interpolate
+//            var y, p1 = series.data[j - 1], p2 = series.data[j];
+//            if (p1 == null)
+//                y = p2[1];
+//            else if (p2 == null)
+//                y = p1[1];
+//            else
+//                y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+//
+//            legends.eq(i).text(series.label.replace(/=.*/, "= " + y.toFixed(2)));
+//        }
+//    }
+//    
+//    $(pl).bind("plothover",  function (event, pos, item) {
+//        latestPosition = pos;
+//        if (!updateLegendTimeout)
+//            updateLegendTimeout = setTimeout(updateLegend, 50);
+//    });
+//});
+</script>
 </body>
 </html>

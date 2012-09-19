@@ -207,15 +207,17 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
     </div>
 </div>
 <!--<div region="east" split="true" title="East" style="width:100px;padding:10px;">east region</div>-->
-<div region="south" title="status" split="true" style="height:50px;background:#efefef;overflow:hidden;">
+<div region="south" title="status" split="true" style="height:58px;background:#efefef;overflow:hidden;">
     <div class="easyui-layout" fit="true"  style="background:#ccc;">
         <div region="center" style="overflow:hidden;">
-			<input type="edit" hidden="true" style="color: #000000; background-color:#AAAAAA; width: 300px;" id='iurl' value="2_2_period_short.las"  ><input type="button" style="" id='qq' value=">>" onClick="readFileInWorker()" >
-            <a href="#" class="easyui-linkbutton" onclick="continueProcessing()" >Start</a>	
-			<a href="#" class="easyui-linkbutton" onclick="testProgressbar()" >Test</a>	
+			<input type="edit" hidden="true" style="color: #000000; background-color:#AAAAAA; width: 300px;" id='iurl' value="2_2_period_short.las"  >
+			<!--<input type="button" style="" id='qq' value=">>" onClick="readFileInWorker()" >-->
+			<a href="#" class="easyui-linkbutton" id='qq' onClick="readFileInWorker()" >Read default</a>
+            <a href="#" class="easyui-linkbutton" onclick="continueProcessing()" >Start calculation</a>	
+			<!--<a href="#" class="easyui-linkbutton" hidden="true" onclick="testProgressbar()" >Test</a>	-->
         </div>
         <div region="east" split="true" style="width:200px;overflow:hidden;">
-            <div id="progressbar" class="easyui-progressbar" ></div>
+            <div id="progressbar" class="easyui-progressbar" style="margin-top:2px;height:18px;"></div>
         </div>
     </div>
 </div>
