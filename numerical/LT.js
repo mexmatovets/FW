@@ -45,9 +45,11 @@ LT=function(F,t){
 		for(var ei = 0; ei < sl; ei++){
 			el=s[ei];
 			for(var i = 0; i < N; i++){
-				t1=t[i+1];Fi=F[i];er1=Math.exp(-el.real*t1);er0=Math.exp(-el.real*t0);ei1=-el.imag*t1;ei0=-el.imag*t0;
-				r[ei].add([Fi*(er1*Math.cos(ei1)-er0*Math.cos(ei0)),Fi*(er1*Math.sin(ei1)-er0*Math.sin(ei0))]);
-				t0=t1;
+				//if (!isNaN(F[i])){
+					t1=t[i+1];Fi=F[i];er1=Math.exp(-el.real*t1);er0=Math.exp(-el.real*t0);ei1=-el.imag*t1;ei0=-el.imag*t0;
+					r[ei].add([Fi*(er1*Math.cos(ei1)-er0*Math.cos(ei0)),Fi*(er1*Math.sin(ei1)-er0*Math.sin(ei0))]);
+					t0=t1;
+				//}
 			}
 		}
 		for(var ri = 0; ri < sl; ri++){	

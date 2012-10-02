@@ -9,7 +9,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
     <title>Flotter</title>
 	<link rel="stylesheet" type="text/css" href="../scripts/easyui.css">	
     <link rel="stylesheet" type="text/css" href="../scripts/icon.css">
-    <<script language="javascript" type="text/javascript" src='../scripts/jquery-1.7.1.min.js'></script>
+    <script language="javascript" type="text/javascript" src='../scripts/jquery-1.7.1.min.js'></script>
     <script language="javascript" type="text/javascript" src="../scripts/jquery.easyui.min.js"></script>
     <script language="javascript" type="text/javascript" src="../scripts/$require.js"></script>
 	<script language="javascript" type="text/javascript" src="../scripts/jsutils.js"></script>
@@ -30,16 +30,10 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
 <body>
 
 <div class="easyui-layout" style="width:100%;height:100%;">  
-    <div region="west" split="true" title="Navigator" style="width:150px;">  
-        <p style="padding:5px;margin:0;">Select language:</p>  
-        <ul>  
-            <li><a href="javascript:void(0)" onclick="showcontent('java')">Java</a></li>  
-            <li><a href="javascript:void(0)" onclick="showcontent('cshape')">C#</a></li>  
-            <li><a href="javascript:void(0)" onclick="showcontent('vb')">VB</a></li>  
-            <li><a href="javascript:void(0)" onclick="showcontent('erlang')">Erlang</a></li>  
-        </ul>  
+    <div region="west" split="true" title="" style="width:150px;">  
+		<p id="choices">Show:</p>
     </div>  
-    <div id="content" region="center" title="Language" style="padding:5px;">  
+    <div id="content" region="center" title="" style="padding:5px;">  
 		<div id="placeholder" style="width:95%;height:95%;"></div>	
     </div>  
 </div>
@@ -105,12 +99,39 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
 		}	
 		//$(pl).draggable().resizable();
 		
+		   // insert checkboxes 
+    var choiceContainer = $("#choices");
+    $.each(fdata, function(key, val) {
+        choiceContainer.append('<br/><input type="checkbox" name="' + key +
+                               '" checked="checked" id="id' + key + '">' +
+                               '<label for="id' + key + '">'
+                                + val.label.split('=')[0] + '</label>');
+    });
+	choiceContainer.find("input").click(plotAccordingToChoices);
+	function plotAccordingToChoices() {
+        var data = [];
+
+        choiceContainer.find("input:checked").each(function () {
+            var key = $(this).attr("name");
+            if (key && datasets[key])
+                data.push(datasets[key]);
+        });
+
+        if (data.length > 0)
+            $.plot($("#placeholder"), data, {
+                yaxis: { min: 0 },
+                xaxis: { tickDecimals: 0 }
+            });
+    }
 		//$(pl).bind({hover:  function (event, pos, item) {
         //latestPosition = pos;
         //if (!updateLegendTimeout)
         //    updateLegendTimeout = setTimeout(updateLegend, 50);
 		//}
 		//});
+		
+		
+		
         return  time; //msec		
         //$.blockUI({ message: '<img src="../scripts/images/wait27.gif" /> '+ "loading" });
     }

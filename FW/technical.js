@@ -307,7 +307,7 @@ function addRate(){
 	}
 	addArbitrary(obj);
 }
-function addArbitrary(graphs){
+function addArbitrary(graphs){//addArbitrary([{name:'Well 7138 pressure'}]);
 	var div = document.getElementById('myView1'); 
 	var divChild=document.createElement('div');
 	divChild.setAttribute('id','placeholderGr'+myGlob.count);	

@@ -47,6 +47,8 @@ function parseText(textfile,opts){
 
         for (var i = 1; i < stringsArray.length; i++){
             var temp = stringsArray[i].split("\t");
+			//var tmp=stringsArray[i].match(/[-+]?\d*\.?\d*(e(\+?|\-?)|\.?)\d*/gi);
+			//var temp=[]; for (var i = 0; i < tmp.length; i++){if (tmp[i]!=="") temp.push(tmp[i]);}
             if (temp[0]===firstStr[0]||temp[0]==="") continue;
             if (!fileObj.columns[temp[0]]) fileObj.columns[temp[0]]={};
             for (var j = 1; j < firstStr.length; j++){
