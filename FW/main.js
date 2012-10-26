@@ -162,7 +162,7 @@ function newcontinueProcessingInWorker(opts){
     else
         return lpc.callf('newcontinueProcessingInWorker',getOpts());
 }
-function continueProcessingInWorker(opts){
+/*function continueProcessingInWorker(opts){
     if(LPC.is_worker()){
         if (self.lasfile){
             self.log.send({mu:"data reading"});                          self.tic=LPC.Tic();
@@ -206,6 +206,7 @@ function continueProcessingInWorker(opts){
     else
         return lpc.callf('continueProcessingInWorker',loadPales());
 }
+*/
 function check_table(opts){
 	if (opts.rows.rows.length<4) throw "You should append more rows to table. Use drag&drop method for instance.";
 	if (opts.rows.rows.length%2) throw "Expected an even number of curves";
@@ -244,7 +245,7 @@ function check_table(opts){
 	//обязательно наличие одной(!) курвы рейтов (х и у)
 	//обязательно наличие хотябы одной курвы давлений на обсервере (выполняется автоматически за счет условия 1)
 }
-function buildInputObjToSolver(opts){
+function buildInputObjToSolver(opts){ 
 	var toSend=[];
 	//self.log.send({obj:{opts:opts,curve_names:self.LAS.curve_names}});
 	for (var i = 0; i < opts.rows.rows.length; i++){

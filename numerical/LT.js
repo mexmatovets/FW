@@ -214,6 +214,8 @@ function LT_solve(lps, lqs, z){
 	var kappa_curves=[];
 	for (var i = 0; i < lps.length; i++){
 		var theta=(new LT([1], [1])).angle(lps[i].lps,lqs);
+		var sum = 0; for (var j = 0; j < theta.length; j++){sum+=theta[j];} sum=sum/theta.length;
+		self.log.send({mc:["Sdvig po faze dlya "+lps[i].wellName, sum]});
 		var eta=calc_eta_n(theta,z,0);
 		kappa_curves[i]={kappa_curves:get_kappa(eta,lps[i].R),wellName:lps[i].wellName};
 	}
