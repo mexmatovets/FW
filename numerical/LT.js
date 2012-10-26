@@ -178,8 +178,9 @@ function parse_rate(obj, z){
 	for (var  i = 0; i < obj.length; i++){
 		if(obj[i].dataType==="Rate time")  {if (obj[i].R!==0&&obj[i].R!=="0") throw "Rates should have R=0"; x=obj[i].data; name=obj[i].wellName;}
 		if(obj[i].dataType==="Rate value") {if (obj[i].R!==0&&obj[i].R!=="0") throw "Rates should have R=0"; y=obj[i].data;}
-	}
-	if (!x||!y) throw "Error in rate parse!";
+	}		
+	var resUnv=avoid_unvalids(x, y); x=resUnv.x; y=resUnv.y;
+	if (!x||!y||x.length!=y.length) throw "Error in rate parse!";
 	appendCurve(name+" rate",x,y);
 	var lq=new LT(y, x);	
 	return lq.make_fast(z);
@@ -196,7 +197,7 @@ function parse_observers(obj, z){
 		for (var  j = 0; j < x.length; j++){
 			if (x[i].wellName===y[j].wellName) {
 				if (x[i].R!=y[j].R) throw "Wells with similar names must have similar R!";
-				if (x[i].R!=0&&x[i].unvalids) {var tmpT=LPC.Tic(); var resUnv=avoid_unvalids(x[i].data, y[j].data, x[i].unvalids);x[i].data=resUnv.x;y[j].data=resUnv.y; avoidTime+=tmpT.sec();}
+				if (x[i].R!=0/*&&x[i].unvalids*/) {var tmpT=LPC.Tic(); var resUnv=avoid_unvalids(x[i].data, y[j].data, x[i].unvalids);x[i].data=resUnv.x;y[j].data=resUnv.y; avoidTime+=tmpT.sec();}
 				if (x[i].R!=0) lp.push({lp:(new LT(y[j].data, x[i].data)),R:x[i].R,wellName:x[i].wellName});// не учитываем давление на инжекторе
 				if (x[i].R!=0) appendCurve(x[i].wellName+" pressure",x[i].data,y[i].data);
 			}
