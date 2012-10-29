@@ -285,6 +285,17 @@ function addKappas(){
 	}
 	addArbitrary(obj);
 }
+function addPressuresInj(){
+	var arr=[], obj=[]; 
+	for (tmp in myGlob.graphArrays) 
+		if (myGlob.graphArrays.hasOwnProperty(tmp)) 
+			if(tmp.search(" press_injection")!=-1)
+				arr.push(tmp);
+	for (var i = 0; i < arr.length; i++){
+		obj.push({name:arr[i]});//[{name:'pInj',color:'green'}
+	}
+	addArbitrary(obj);
+}
 function addPressures(){
 	var arr=[], obj=[]; 
 	for (tmp in myGlob.graphArrays) 

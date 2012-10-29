@@ -199,6 +199,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                     <div style="padding:20px;overflow:hidden;">
 						<a href="#" class="easyui-linkbutton" onclick="addRate()" >Show rate</a>
 						<a href="#" class="easyui-linkbutton" onclick="addPressures()" >Show pressures</a>
+						<a href="#" class="easyui-linkbutton" onclick="addPressuresInj()" >Show pressures on injector</a>
 						<a href="#" class="easyui-linkbutton" onclick="addKappas()" >Show kappas</a>
                     </div>
                 </div>
