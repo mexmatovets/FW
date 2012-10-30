@@ -67,6 +67,12 @@ var datasets = {
 				updateLegendTimeout = setTimeout(updateLegend, 50);
 		});
 		function updateLegend() {
+			var pl="#placeholder";
+			var legends = $(pl+" .legendLabel");
+			legends.each(function () {
+				// fix the widths so they don't jump around
+				$(this).css('width', $(this).width());
+			});
 			updateLegendTimeout = null;
 			
 			var pos = latestPosition;
@@ -75,13 +81,18 @@ var datasets = {
 			if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
 				pos.y < axes.yaxis.min || pos.y > axes.yaxis.max)
 				return;
-		
-			var i, j, dataset = plot_obj.getData();
-			for (i = 0; i < dataset.length; ++i) {
+				
+			var dataset=[];// = plot_obj.getData();	
+			choiceContainer.find("input:checked").each(function () {
+				var key = $(this).attr("name");
+				if (key && datasets[key])
+					dataset.push(datasets[key]);
+			});		
+			for (var i = 0; i < dataset.length; ++i) {
 				var series = dataset[i];
 		
 				// find the nearest points, x-wise
-				for (j = 0; j < series.data.length; ++j)
+				for (var j = 0; j < series.data.length; ++j)
 					if (series.data[j][0] > pos.x)
 						break;
 				
@@ -103,12 +114,7 @@ var datasets = {
 		var time = new Date() - tic;
         //$.unblockUI();
 		
-		var pl="#placeholder";
-		var legends = $(pl+" .legendLabel");
-		legends.each(function () {
-			// fix the widths so they don't jump around
-			$(this).css('width', $(this).width());
-		});
+		
 		var updateLegendTimeout = null;
 		var latestPosition = null;
 		//$(pl).draggable().resizable();
