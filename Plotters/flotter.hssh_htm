@@ -39,9 +39,24 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
 </div>
 
 <script type="text/javascript">
-
+var sin = [], cos = [];
+for (var i = 0; i < 14; i += 0.1) {
+    sin.push([i, Math.sin(i)]);
+    cos.push([i, Math.cos(i)]);
+}	
+var datasets = {
+    "sin": {
+        label: "sin(x)",
+        data: sin
+	},
+	"cos": {
+		label: "cos(x)",
+		data:cos
+	}
+}
 	function plot(fdata,fopts)
     { 
+		datasets=fdata;
 		var tic=new Date();
         var args=jsutils.to_array(arguments);
 		for (var i = 0; i < args[0].length; i++ ){args[0][i].label=args[0][i].label+" = -0.00000"}
@@ -51,7 +66,37 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
 			if (!updateLegendTimeout)
 				updateLegendTimeout = setTimeout(updateLegend, 50);
 		});
+		function updateLegend() {
+			updateLegendTimeout = null;
+			
+			var pos = latestPosition;
+			
+			var axes = plot_obj.getAxes();
+			if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
+				pos.y < axes.yaxis.min || pos.y > axes.yaxis.max)
+				return;
 		
+			var i, j, dataset = plot_obj.getData();
+			for (i = 0; i < dataset.length; ++i) {
+				var series = dataset[i];
+		
+				// find the nearest points, x-wise
+				for (j = 0; j < series.data.length; ++j)
+					if (series.data[j][0] > pos.x)
+						break;
+				
+				// now interpolate
+				var y, p1 = series.data[j - 1], p2 = series.data[j];
+				if (p1 == null)
+					y = p2[1];
+				else if (p2 == null)
+					y = p1[1];
+				else
+					y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+		
+				legends.eq(i).text(series.label.replace(/=.*/, "= " + y.toFixed(2)));
+			}
+		}
 		//plot_obj=$.plot($("#placeholder"), args[0],args[1]);
 		////$.my_legend({},args);
 		//
@@ -66,39 +111,12 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
 		});
 		var updateLegendTimeout = null;
 		var latestPosition = null;
-		function updateLegend() {
-			updateLegendTimeout = null;
-			
-			var pos = latestPosition;
-			
-			var axes = plot_obj.getAxes();
-			if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
-				pos.y < axes.yaxis.min || pos.y > axes.yaxis.max)
-				return;
-        
-			var i, j, dataset = plot_obj.getData();
-			for (i = 0; i < dataset.length; ++i) {
-				var series = dataset[i];
-        
-				// find the nearest points, x-wise
-				for (j = 0; j < series.data.length; ++j)
-					if (series.data[j][0] > pos.x)
-						break;
-				
-				// now interpolate
-				var y, p1 = series.data[j - 1], p2 = series.data[j];
-				if (p1 == null)
-					y = p2[1];
-				else if (p2 == null)
-					y = p1[1];
-				else
-					y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
-        
-				legends.eq(i).text(series.label.replace(/=.*/, "= " + y.toFixed(2)));
-			}
-		}	
 		//$(pl).draggable().resizable();
-		
+	var i = 0;
+    $.each(datasets, function(key, val) {
+        val.color = i;
+        ++i;
+    });	
 		   // insert checkboxes 
     var choiceContainer = $("#choices");
     $.each(fdata, function(key, val) {
@@ -117,11 +135,20 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
                 data.push(datasets[key]);
         });
 
-        if (data.length > 0)
+        //if (data.length > 0)
             $.plot($("#placeholder"), data, {
-                yaxis: { min: 0 },
-                xaxis: { tickDecimals: 0 }
-            });
+                            series: {
+                                lines: { show: true }
+                            },
+                            crosshair: { mode: "x" },
+                            grid: { hoverable: true, autoHighlight: false }//,
+                            //yaxis: { min: -1.2, max: 1.2 }
+                        });
+		$("#placeholder").bind("plothover", function (evt, pos, item) {
+			latestPosition = pos;
+			if (!updateLegendTimeout)
+				updateLegendTimeout = setTimeout(updateLegend, 50);
+		});						
     }
 		//$(pl).bind({hover:  function (event, pos, item) {
         //latestPosition = pos;
@@ -132,23 +159,29 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../
 		
 		
 		
-        return  time; //msec		
+    return  time; //msec		
         //$.blockUI({ message: '<img src="../scripts/images/wait27.gif" /> '+ "loading" });
     }
 </script>
 
-<script type="text/javascript">
+<script type="text/javascript">    
+
 function init() {
     var d1 = [];for (var i = 0; i < Math.PI * 2; i += 0.25)d1.push([i, Math.sin(i)]);   
     var d2 = [];for (var i = 0; i < Math.PI * 2; i += 0.25)d2.push([i, Math.cos(i)]);
 	var d3 = [];for (var i = 0; i < Math.PI * 2; i += 0.1 )d3.push([i, Math.tan(i)]);
-    var sin = [], cos = [];
-    for (var i = 0; i < 14; i += 0.1) {
-        sin.push([i, Math.sin(i)]);
-        cos.push([i, Math.cos(i)]);
-    }	
-    
-	plot([
+
+    plot(datasets,	{
+                            series: {
+                                lines: { show: true }
+                            },
+                            crosshair: { mode: "x" },
+                            grid: { hoverable: true, autoHighlight: false }//,
+                            //yaxis: { min: -1.2, max: 1.2 }
+                        }
+	
+	);
+	/*plot([
         { data: sin, label: "sin(x)"  },
         { data: cos, label: "cos(x)"  },
     ],	{
@@ -160,7 +193,7 @@ function init() {
                             //yaxis: { min: -1.2, max: 1.2 }
                         }
 	
-	);
+	);*/
 };	
 //window.onload=init;
 </script>
