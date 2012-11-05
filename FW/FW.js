@@ -12,6 +12,9 @@ $require(
     '../numerical/dsp.js',
     '../numerical/utils_1D.js',
     '../numerical/Complex.js',
+	'../numerical/Coxhead/LUDecomposition.js',
+	'../numerical/Coxhead/Matrix.js',
+	'../numerical/bessel_approximations.js',
     '../scripts/meshutils.js',
     '../scripts/flot.js',
 	'../scripts/jsutils.js'

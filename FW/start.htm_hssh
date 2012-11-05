@@ -40,6 +40,8 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 <script type="text/javascript" src="../scripts/formater.js"></script>
 <script type="text/javascript" src="../scripts/LPC.js"></script>
 <script type="text/javascript" src="../numerical/dsp.js"></script>
+<!--<script type="text/javascript" src="../numerical/Coxhead/LUDecomposition.js"></script>-->
+<!--<script type="text/javascript" src="../numerical/Coxhead/Matrix.js"></script>-->
 <script type="text/javascript" src="interp.js"></script>
 <script type="text/javascript" src="las_reader.js"></script>
 <script type="text/javascript" src="textParser.js"></script>

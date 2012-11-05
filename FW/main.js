@@ -118,7 +118,7 @@ function Solver(toSend){
 	//self.log.send({obj:toSend});
 	try{//start_LT_solver
 		self.tic=LPC.Tic();
-		start_LT_solver(toSend);
+		start_LT_solver_v2(toSend);
 		self.log.send({mc:["LT_solver is OK!", self.tic.sec()]});
 	}catch (e) {
 		self.log.send({unlock:1});self.log.send({alert:e});
