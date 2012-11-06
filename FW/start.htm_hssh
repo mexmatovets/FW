@@ -77,10 +77,10 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                             <input id="perm"   type="text"  style="width:90px">
                             [mD]
                         </p><br>
-                        <p> Приведенный радиус<br>
-                            <input id="perm"   type="text"  style="width:90px">
+                        <!--<p> Приведенный радиус<br>
+                            <input id="rad"   type="text"  style="width:90px">
                             [cm]
-                        </p>
+                        </p>-->
                     </form>
                 </div>
 				<div  title="Outside data" iconCls="icon-ok" style="overflow:hidden;">
@@ -104,13 +104,33 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 <div title="Input data" style="padding:10px;">
                     <form>
                         <p> Эффективная толщина пласта<br>
-                            <input id="h"  type="text" value="4.5" id="hEdit" style="width:60px">
+                            <input id="h"  type="text" value="4.5" style="width:60px">
                             [m]
                         </p><br>
                         <p> Вязкость<br>
-                            <input id="mu" type="text" value="0.6" id="muEdit" style="width:60px">
+                            <input id="mu" type="text" value="0.6" style="width:60px">
                             [mPa*sec]
-                        </p>
+                        </p><br>
+						<p> Пористость<br>
+                            <input id="poro" type="text" value="0.16" style="width:60px">
+                            []
+                        </p><br>
+						<p> Сжимаемость жидкости<br>
+                           <input id="Bj" type="text" value="0.0002" style="width:60px">
+                            [1/atm]
+                        </p><br>
+						<p> Сжимаемость пласта<br>
+                            <input id="Bc" type="text" value="0.00004" style="width:60px">
+                            [1/atm]
+                        </p><br>
+						<p> Верхняя граница поиска пьезопроводности<br>
+                            <input id="topBnd" type="text" value="15000" style="width:60px">
+                            [cm^2/sec]
+                        </p><br>
+						<p> Шаг поиска пьезопроводности<br>
+                            <input id="stepSearch" type="text" value="10" style="width:60px">
+                            [cm^2/sec]
+                        </p><br>
                     </form>
                 </div>
                 <div title="View">
@@ -132,21 +152,21 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 <div title="Values" iconCls="icon-reload" style="padding:10px;">
                     <form>
                         <p> Пьезопроводность<br>
-                            <input id="kappa"  type="text"  style="width:90px">
+                            <input id="kappa2"  type="text"  style="width:90px">
                             [cm^2/sec]
                         </p><br>
                         <p> Гидропроводность<br>
-                            <input id="hyd"    type="text"  style="width:90px">
+                            <input id="hyd2"    type="text"  style="width:90px">
                             [m^3/(Pa*sec)]
                         </p><br>
                         <p> Проницаемость<br>
-                            <input id="perm"   type="text"  style="width:90px">
+                            <input id="perm2"   type="text"  style="width:90px">
                             [mD]
                         </p><br>
-                        <p> Приведенный радиус<br>
-                            <input id="perm"   type="text"  style="width:90px">
+                        <!--<p> Приведенный радиус<br>
+                            <input id="rad2"   type="text"  style="width:90px">
                             [cm]
-                        </p>
+                        </p>-->
                     </form>
                 </div>
 				<div  title="Outside data" iconCls="icon-ok" style="overflow:hidden;">

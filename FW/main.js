@@ -78,6 +78,7 @@ function continueProcessing(){
         $.unblockUI();
 		newcontinueProcessingInWorker()({
             done:function(r){
+				print_results(r)
                 plot_data(r);
 				$('#progressbar').progressbar('setValue', 100);
             },
@@ -111,15 +112,23 @@ function getOpts(){
 		var rows=$('#cartcontent').datagrid('getData');//checkRows(rows);
 		inputDataToWorker.rows=rows;
 		var consts={};consts.h=$('#h')[0].value-0;consts.mu=$('#mu')[0].value-0;//checkConsts(consts);
+		consts.poro=$('#poro')[0].value-0;
+		consts.B_c=$('#Bc')[0].value-0;
+		consts.B_gi=$('#Bj')[0].value-0;
 		inputDataToWorker.consts=consts;
+		try{
+			inputDataToWorker.stepSearch=($('#stepSearch')[0].value-0)*1e-4;
+			inputDataToWorker.topBnd=    ($('#topBnd')[0].    value-0)*1e-4;
+		}catch(e){throw "Error in input data parse"}
 		return inputDataToWorker;
 }
 function Solver(toSend){	
 	//self.log.send({obj:toSend});
 	try{//start_LT_solver
 		self.tic=LPC.Tic();
-		start_LT_solver_v2(toSend);
+		var kappa=start_LT_solver_v2(toSend);
 		self.log.send({mc:["LT_solver is OK!", self.tic.sec()]});
+		self.log.send({mc:["Piesoconductivity [cm^2/sec]", kappa*1e+4]});
 	}catch (e) {
 		self.log.send({unlock:1});self.log.send({alert:e});
 	}
@@ -130,7 +139,7 @@ function Solver(toSend){
 	//var rate=reduse_curve(self.las.curves[0],512,512).cn;self.log.send({aa:["rate", rate]});
 	//var pInj=reduse_curve(self.las.curves[1],512,512).cn;self.log.send({aa:["pInj", pInj]});
 	//var pObs=reduse_curve(self.las.curves[2],512,512).cn;self.log.send({aa:["pObs", pObs]});	
-	return {};
+	return kappa;
 };
 function appendCurve(name,x,y){
 	var pairs=[];
@@ -144,15 +153,15 @@ function newcontinueProcessingInWorker(opts){
 				check_table(opts);								self.log.send({mu:"data reading"});self.log.send({mc:["table checked", self.tic.sec()]});self.tic=LPC.Tic();self.log.send({mp:30});
 				self.LAS=new DataObject(lasfile).las;			self.log.send({mc:["data reading is OK!", self.tic.sec()]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
 				var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec()]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
-				var res = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
-				return res;
+				var kappa = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
+				return find_other_values(kappa,opts);		    // kappa[m^2/sec]
 			}
 			if (self.txtfile){									self.tic=LPC.Tic();	
 				check_table(opts);								self.log.send({mu:"data reading"});self.log.send({mc:["table checked", self.tic.sec()]});self.tic=LPC.Tic();self.log.send({mp:30});
 				self.LAS=textReader();							self.log.send({mc:["data reading is OK!", self.tic.sec()]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
 				var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec()]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
-				var res = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
-				return res;			
+				var kappa = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
+				return find_other_values(kappa,opts);		    // kappa[m^2/sec]			
 			}
 		}catch (e) {
 			self.log.send({unlock:1});self.log.send({alert:e});
@@ -161,6 +170,26 @@ function newcontinueProcessingInWorker(opts){
     }
     else
         return lpc.callf('newcontinueProcessingInWorker',getOpts());
+}
+function find_other_values(kappa,opts){//input kappa [m^2/sec]
+	var all_values={};
+	all_values.kappa=kappa; //[m^2/sec]
+	var AtmByPa= 101325;
+	var Darcy=9.87e-13;
+	var B_zv=opts.consts.poro*(opts.consts.B_gi/AtmByPa)+(opts.consts.B_c/AtmByPa); //[1/РџР°]
+	//kappa*opts.consts.mu [mPa/sec]
+	all_values.perm=kappa*opts.consts.mu*1e-3*B_zv;// [m^2/sec]*[(mPa*1e_3)*sec]*[1/Pa]=[m^2]
+	all_values.perm/=Darcy*1e-3; //[mDa]
+	all_values.hydr=kappa*B_zv*opts.consts.h; //[m^2/sec]*[1/Pa]*m=[m^3/Pa*sec]
+	return all_values;
+}
+function print_results(all_values){
+	$('#kappa')[0]. value=(all_values.kappa*1e+4).toExponential(2);//[cm^2/sec]
+	$('#kappa2')[0].value=(all_values.kappa*1e+4).toExponential(2);
+	$('#hyd')[0].   value=(all_values.hydr).toExponential(2);
+	$('#hyd2')[0].  value=(all_values.hydr).toExponential(2);
+	$('#perm')[0].  value=(all_values.perm).toExponential(2);
+	$('#perm2')[0]. value=(all_values.perm).toExponential(2);
 }
 /*function continueProcessingInWorker(opts){
     if(LPC.is_worker()){
@@ -246,7 +275,7 @@ function check_table(opts){
 	//обязательно наличие хотябы одной курвы давлений на обсервере (выполняется автоматически за счет условия 1)
 }
 function buildInputObjToSolver(opts){ 
-	var toSend=[];
+	var toSend=[]; var opt={};
 	//self.log.send({obj:{opts:opts,curve_names:self.LAS.curve_names}});
 	for (var i = 0; i < opts.rows.rows.length; i++){
 		var ind=-1;for (var ii=0; ii< self.LAS.curve_names.length;ii++){if (self.LAS.curve_names[ii].substr(0,self.LAS.curve_names[ii].length-1)===opts.rows.rows[i].logName.substr(0,self.LAS.curve_names[ii].length-1)) {ind=ii;break;} }  if(ind===-1) throw "Sorry, names conflict"; var data=self.LAS.curves[ind];
@@ -260,7 +289,9 @@ function buildInputObjToSolver(opts){
 			wellName:opts.rows.rows[i].wellName
 		}
 	}
-	return toSend;	
+	opt.stepSearch=opts.stepSearch;
+	opt.topBnd=    opts.topBnd;//($(topBnd)[0].    value-0)*1e-4;
+	return {obj:toSend,opt:opt};	
 }
 function makeCancel(){
     if (self.opt&&self.opt.corresponding) delete(self.opt.corresponding);
@@ -450,7 +481,10 @@ function newPrepare_data_for_plotting(las,opts){
     return {phase:cw12.phase(), graphs:graphs};*/
 	return {phase:0, graphs:graphs};
 }
-function findValues(phase, opts){
+function findValuesFromKappa(kappa){
+	
+}
+function findValuesFromPhase(phase, opts){
     var s = "";
 //-----------------------------------------------------------------------------------------------------------------------------------------------------
     var piesoConductivity = (Math.PI*Math.pow(opts.R,2))/(opts.period*(3600)*Math.pow((phase-Math.PI/8), 2));

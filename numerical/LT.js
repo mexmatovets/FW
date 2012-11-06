@@ -451,7 +451,10 @@ function solve_v2(opt){
 		var sp=lp.make_int([jw0]);
 		opt.p[i].pss={r:opt.p[i].x.R/1000,p:sp.r[0]};
 	}
-	var bounds = [1.e-3, 15, 0.0100]; var kappa_bounds = []; var i=0,n=0; kappa_bounds[0]=bounds[0]; while (n < Math.floor((bounds[1]-bounds[0])/bounds[2])){	i++; n++; kappa_bounds[i]=bounds[2]+kappa_bounds[i-1]; }
+	var bounds = [1.e-3, 15, 0.0100]; 
+	bounds[0]=opt.stepSearch;
+	bounds[1]=opt.topBnd;
+	var kappa_bounds = []; var i=0,n=0; kappa_bounds[0]=bounds[0]; while (n < Math.floor((bounds[1]-bounds[0])/bounds[2])){	i++; n++; kappa_bounds[i]=bounds[2]+kappa_bounds[i-1]; }
 	var root_args=root_arg_s(opt.p,sq,jw0,kappa_bounds);
 	var val = 1e+9; var ind=-1; for (var i = 0; i < root_args.length; i++){if (root_args[i]<val){val=root_args[i]; ind=i;}}; if (ind===-1) throw "Root args error";//[val,inx]=min(fa);
 	return kappa_bounds[ind];
@@ -482,9 +485,11 @@ function start_LT_solver_v2(obj){
 			//отдельно обрабатывается курва с закачкой
 			//заносим графики капп для всех остальных обсерверов 
 			//заносим давления на инжекторах в myGlob для прорисовки
-	var opt = preparing_for_solver_start(obj); 
+	var opt = preparing_for_solver_start(obj.obj); 
+	opt.topBnd=obj.opt.topBnd;opt.stepSearch=obj.opt.stepSearch;	
 	check_bounds(opt);// необходимо совпадение границ временных отрезков у закачки и давлений
-	var kappa=solve_v2(opt);		
+	var kappa=solve_v2(opt);	
+	return kappa;
 	/*------------------/*/
 }
 function preparing_for_solver_start(obj){
@@ -495,5 +500,6 @@ function preparing_for_solver_start(obj){
 	var p=check_conditions_on_dataType(obj,1);p=p.ps;
 	opt.t=r.x; opt.q=r.y; 
 	for (var i = 0; i < p.length; i++) {if (p[i].x.R!=0) opt.p.push(p[i]);}
+
 	return opt;
 }
