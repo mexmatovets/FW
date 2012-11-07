@@ -17,6 +17,30 @@ function norm(arr){//нормировка массива
 	}; 
 	return res;
 }
+function find_gamma(opt, kappa, sq, jw0){
+	var gamma=[];
+	for (var i = 0; i < opt.p.length; i++){
+		//gamma(k)=(pss{k}.p/(qs*K0(double(pss{k}.r)*sqrt(jw0/kkr))));
+		var bes=besselK0a22(jw0.copy().div(kappa).sqrt().mul(opt.p[i].pss.r));
+		gamma[i]=opt.p[i].pss.p.copy().div(bes.mul(sq));
+	}
+	return {gamma:gamma}
+}
+function find_phases(opt,kappa,sq,jw0){
+	var phases=[], phases_t=[], phases_t2=[];
+	for (var i = 0; i < opt.p.length; i++){
+		//angle(pss{k}.p/qs);
+		phases[i]=angle([opt.p[i].pss.p.copy().div(sq)])[0]
+		//ph(2,k)=angle(K0(r*sqrt(jw0/kkr)));
+		var arg=jw0.copy().div(kappa).sqrt().mul(opt.p[i].pss.r);		
+		var bes=besselK0a22(arg);
+		phases_t[i]=angle([bes])[0];
+		//angle(K0a(r*sqrt(jw0/kkr))); //K0a = @(t)sqrt(pi/2./t).*exp(-t);
+		var sec=arg.copy().mul(-1).exp().mul(arg.inverse().mul(Math.PI/2).sqrt());
+		phases_t2[i]=angle([sec])[0];
+	}
+	return {phases:[phases,phases_t,phases_t2]};
+}
 function eliminate_bk(o, deg){
 	var res=[];
 	var t = norm(o.x.data);
@@ -404,7 +428,7 @@ function check_conditions_on_dataType(obj,flag_rate0_or_pres1){
 				}
 			}
 		}
-		self.log.send({mc:["Time for pressures interpolation", avoidTime]});	
+		self.log.send({mc:["Time for pressures interpolation", avoidTime.toFixed(2)]});	
 	}
 	return {ps:ps};
 }
@@ -423,7 +447,7 @@ function parse_pressures(obj, z){
 	lpl=lp.length;
 	lp.forEach(function(el,i){
 		lps[i]={lps:el.lp.make_fast(z),R:el.R,wellName:el.wellName}; 
-		self.log.send({mc:["LT maked pressure "+el.wellName, self.locTic.sec()]});self.log.send({mp:Math.round(25/lpl+75)}); self.locTic=LPC.Tic();
+		self.log.send({mc:["LT maked pressure "+el.wellName, self.locTic.sec().toFixed(2)]});self.log.send({mp:Math.round(25/lpl+75)}); self.locTic=LPC.Tic();
 	});
 	return lps;
 }
@@ -456,8 +480,17 @@ function solve_v2(opt){
 	bounds[1]=opt.topBnd;
 	var kappa_bounds = []; var i=0,n=0; kappa_bounds[0]=bounds[0]; while (n < Math.floor((bounds[1]-bounds[0])/bounds[2])){	i++; n++; kappa_bounds[i]=bounds[2]+kappa_bounds[i-1]; }
 	var root_args=root_arg_s(opt.p,sq,jw0,kappa_bounds);
-	var val = 1e+9; var ind=-1; for (var i = 0; i < root_args.length; i++){if (root_args[i]<val){val=root_args[i]; ind=i;}}; if (ind===-1) throw "Root args error";//[val,inx]=min(fa);
-	return kappa_bounds[ind];
+	var val = 1e+9; var ind=-1; 
+	for (var i = 0; i < root_args.length; i++){
+		if (root_args[i]<val){
+			val=root_args[i]; 
+			ind=i;
+		}
+	}; 
+	if (ind===-1) throw "Root args error";//[val,inx]=min(fa);
+	var gamma=find_gamma(opt,kappa_bounds[ind],sq.r[0],jw0);
+	var phases=find_phases(opt,kappa_bounds[ind],sq.r[0],jw0);
+	return {kappa:kappa_bounds[ind],gamma:gamma};
 }
 function save_curves_in_local_memory(kappa_curves, x){
 	var toPlot=[]; 
@@ -473,7 +506,7 @@ function start_LT_solver_v1(obj){
 			//заносим графики капп для всех остальных обсерверов 
 			//заносим давления на инжекторах в myGlob для прорисовки
 	var z = (new LT([1], [1])).generate_complex(); self.locTic=LPC.Tic();
-	var lqs=parse_rate(obj, z.z); if (!lqs) {throw "Error in rate curve parse!"; }; self.log.send({mc:["LT maked rate", self.locTic.sec()]}); self.log.send({mp:75}); self.locTic=LPC.Tic();
+	var lqs=parse_rate(obj, z.z); if (!lqs) {throw "Error in rate curve parse!"; }; self.log.send({mc:["LT maked rate", self.locTic.sec().toFixed(2)]}); self.log.send({mp:75}); self.locTic=LPC.Tic();
 	var lps=parse_pressures(obj, z.z); 
 	var kappa_curves=solve_v1(lps, lqs, z.z);
 	save_curves_in_local_memory(kappa_curves, z.td);
@@ -488,7 +521,9 @@ function start_LT_solver_v2(obj){
 	var opt = preparing_for_solver_start(obj.obj); 
 	opt.topBnd=obj.opt.topBnd;opt.stepSearch=obj.opt.stepSearch;	
 	check_bounds(opt);// необходимо совпадение границ временных отрезков у закачки и давлений
-	var kappa=solve_v2(opt);	
+	var inner_kappa=solve_v2(opt);	
+	
+	var kappa=1e+6*inner_kappa.kappa/utils_1D.minmax_indexes(opt.t)[1];//out.kappa_Si=(mu^2/tdist_si)*kkr;
 	return kappa;
 	/*------------------/*/
 }

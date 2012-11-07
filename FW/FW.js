@@ -45,7 +45,7 @@ function readLogsNames(somefile)
             self.tic=LPC.Tic();
             self.log.send({mu:"reading logs names"});
             self.LAS=new DataObject(lasfile,{nodata:1}).las;
-            self.log.send({mc:["reading logs names is OK!",self.tic.sec()]});
+            self.log.send({mc:["reading logs names is OK!",self.tic.sec().toFixed(2)]});
             self.lasfile = lasfile;
             self.LAS_logs=self.LAS.curve_names;
             return  {logs:self.LAS_logs, newfile: self.newfile}
@@ -64,7 +64,7 @@ function readLogsNames(somefile)
                     self.LAS_logs.push(arr[j]+'.'+res.firstStr[i]);
                 }
             }
-            self.log.send({mc:["reading logs names is OK!",self.tic.sec()]});
+            self.log.send({mc:["reading logs names is OK!",self.tic.sec().toFixed(2)]});
             return  {logs:self.LAS_logs, newfile: res.newfile}
         }
     }

@@ -127,8 +127,8 @@ function Solver(toSend){
 	try{//start_LT_solver
 		self.tic=LPC.Tic();
 		var kappa=start_LT_solver_v2(toSend);
-		self.log.send({mc:["LT_solver is OK!", self.tic.sec()]});
-		self.log.send({mc:["Piesoconductivity [cm^2/sec]", kappa*1e+4]});
+		self.log.send({mc:["LT_solver is OK!", self.tic.sec().toFixed(2)]});
+		self.log.send({mc:["Piesoconductivity [cm^2/sec]", (kappa*1e+4).toFixed(2)]});
 	}catch (e) {
 		self.log.send({unlock:1});self.log.send({alert:e});
 	}
@@ -150,17 +150,17 @@ function newcontinueProcessingInWorker(opts){
     if(LPC.is_worker()){
 		try{
 			if (self.lasfile){									self.tic=LPC.Tic();		
-				check_table(opts);								self.log.send({mu:"data reading"});self.log.send({mc:["table checked", self.tic.sec()]});self.tic=LPC.Tic();self.log.send({mp:30});
-				self.LAS=new DataObject(lasfile).las;			self.log.send({mc:["data reading is OK!", self.tic.sec()]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
-				var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec()]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
-				var kappa = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
+				check_table(opts);								self.log.send({mu:"data reading"});self.log.send({mc:["table checked", self.tic.sec().toFixed(2)]});self.tic=LPC.Tic();self.log.send({mp:30});
+				self.LAS=new DataObject(lasfile).las;			self.log.send({mc:["data reading is OK!", self.tic.sec().toFixed(2)]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
+				var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec().toFixed(2)]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
+				var kappa = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec().toFixed(2)]});self.log.send({unlock:1});	
 				return find_other_values(kappa,opts);		    // kappa[m^2/sec]
 			}
 			if (self.txtfile){									self.tic=LPC.Tic();	
-				check_table(opts);								self.log.send({mu:"data reading"});self.log.send({mc:["table checked", self.tic.sec()]});self.tic=LPC.Tic();self.log.send({mp:30});
-				self.LAS=textReader();							self.log.send({mc:["data reading is OK!", self.tic.sec()]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
-				var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec()]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
-				var kappa = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec()]});self.log.send({unlock:1});	
+				check_table(opts);								self.log.send({mu:"data reading"});self.log.send({mc:["table checked", self.tic.sec().toFixed(2)]});self.tic=LPC.Tic();self.log.send({mp:30});
+				self.LAS=textReader();							self.log.send({mc:["data reading is OK!", self.tic.sec().toFixed(2)]});self.log.send({mu:"data preparing"}); self.tic=LPC.Tic();	
+				var toSend=buildInputObjToSolver(opts);			self.log.send({mc:["data preparing is OK!", self.tic.sec().toFixed(2)]});self.log.send({mu:"solver started"});self.tic=LPC.Tic();self.log.send({mp:70});
+				var kappa = Solver(toSend);						self.log.send({mc:["solver finished successfully!", self.tic.sec().toFixed(2)]});self.log.send({unlock:1});	
 				return find_other_values(kappa,opts);		    // kappa[m^2/sec]			
 			}
 		}catch (e) {
@@ -184,12 +184,12 @@ function find_other_values(kappa,opts){//input kappa [m^2/sec]
 	return all_values;
 }
 function print_results(all_values){
-	$('#kappa')[0]. value=(all_values.kappa*1e+4).toExponential(2);//[cm^2/sec]
-	$('#kappa2')[0].value=(all_values.kappa*1e+4).toExponential(2);
-	$('#hyd')[0].   value=(all_values.hydr).toExponential(2);
-	$('#hyd2')[0].  value=(all_values.hydr).toExponential(2);
-	$('#perm')[0].  value=(all_values.perm).toExponential(2);
-	$('#perm2')[0]. value=(all_values.perm).toExponential(2);
+	$('#kappa')[0]. value=(all_values.kappa*1e+4).toExponential(3);//[cm^2/sec]
+	$('#kappa2')[0].value=(all_values.kappa*1e+4).toExponential(3);
+	$('#hyd')[0].   value=(all_values.hydr).toExponential(3);
+	$('#hyd2')[0].  value=(all_values.hydr).toExponential(3);
+	$('#perm')[0].  value=(all_values.perm).toExponential(3);
+	$('#perm2')[0]. value=(all_values.perm).toExponential(3);
 }
 /*function continueProcessingInWorker(opts){
     if(LPC.is_worker()){
@@ -275,10 +275,26 @@ function check_table(opts){
 	//обязательно наличие хотябы одной курвы давлений на обсервере (выполняется автоматически за счет условия 1)
 }
 function buildInputObjToSolver(opts){ 
+											function vspom_fun(s1,s2){
+												var ind=-1;
+												for (var i =0; i< Math.min(s1.length, s2.length); i++){
+													if (s1[i]===s2[i])        ind=i;
+													else break;
+												}
+												return ind;
+											}
 	var toSend=[]; var opt={};
 	//self.log.send({obj:{opts:opts,curve_names:self.LAS.curve_names}});
 	for (var i = 0; i < opts.rows.rows.length; i++){
-		var ind=-1;for (var ii=0; ii< self.LAS.curve_names.length;ii++){if (self.LAS.curve_names[ii].substr(0,self.LAS.curve_names[ii].length-1)===opts.rows.rows[i].logName.substr(0,self.LAS.curve_names[ii].length-1)) {ind=ii;break;} }  if(ind===-1) throw "Sorry, names conflict"; var data=self.LAS.curves[ind];
+		var ind=-1;for (var ii=0; ii< self.LAS.curve_names.length;ii++){
+			//if(Math.abs(Math.min(opts.rows.rows[i].logName.substr(0,self.LAS.curve_names[ii].length-1).length,self.LAS.curve_names[ii].substr(0,self.LAS.curve_names[ii].length-1).length)-vspom_fun(opts.rows.rows[i].logName.substr(0,self.LAS.curve_names[ii].length-1),self.LAS.curve_names[ii].substr(0,self.LAS.curve_names[ii].length-1)))<=1){
+			//	ind=ii;break;
+			//}
+			if (self.LAS.curve_names[ii].substr(0,self.LAS.curve_names[ii].length-1)===opts.rows.rows[i].logName.substr(0,self.LAS.curve_names[ii].length-1)) {
+				ind=ii;break;
+			} 
+		}  
+		if(ind===-1) throw "Sorry, names conflict"; var data=self.LAS.curves[ind];
 		var unv=[];var tmp = opts.rows.rows[i].unvalids.match(/((-|)\d*\.*\d+)(\t*|\s*|\n)/g) ;if (tmp&&tmp.length>1)  for (var ii = 0; ii < tmp.length/2 ;ii++){ unv.push({x0:tmp[2*ii]-0,x1:tmp[2*ii+1]-0  });   }
 		toSend[i]={//"[{"data":[[0,1]],"R":0.1,"unvalids":[],"logname":"inj rate","datatype":"injection rate","wellname":"wellname-1"},{"data":[[0,1]],"R":496,"unvalids":[],"logname":"obs press","datatype":"observer press","wellname":"wellname-2"}]"
 			data:data,

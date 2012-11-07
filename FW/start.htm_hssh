@@ -222,7 +222,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 						<a href="#" class="easyui-linkbutton" onclick="addRate()" >Show rate</a>
 						<a href="#" class="easyui-linkbutton" onclick="addPressures()" >Show pressures</a>
 						<a href="#" class="easyui-linkbutton" onclick="addPressuresInj()" >Show pressures on injector</a>
-						<a href="#" class="easyui-linkbutton" onclick="addKappas()" >Show kappas</a>
+						<!--<a href="#" class="easyui-linkbutton" onclick="addKappas()" >Show kappas</a>-->
                     </div>
                 </div>
             </div>
@@ -332,6 +332,19 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 //getOpts();
                 $("#tabs").tabs();
 				if (1){
+					var data ={"total":28,"rows":[
+						{"wellName":"Well 3110","logName":"Injector.rate .S                                                ","productid":"Rate time", "radius":0,  "unvalids":"",							"index":1},
+						{"wellName":"Well 3110","logName":"Injector.rate .M3/DAY                                           ","productid":"Rate value","radius":0,  "unvalids":"",							"index":2},
+						{"wellName":"Well 2839","logName":"Observer464.press .S                                            ","productid":"Pressure time", "radius":464,"unvalids":"",							"index":3},
+						{"wellName":"Well 2839","logName":"Observer464.press .Atm                                          ","productid":"Pressure value","radius":464,"unvalids":"",							"index":4},
+						{"wellName":"Well 3110","logName":"Observer496.press .S                                             ","productid":"Pressure time",     "radius":496,  "unvalids":"",						"index":5},
+						{"wellName":"Well 3110","logName":"Observer496.press .Atm                                           ","productid":"Pressure value",    "radius":496,  "unvalids":"",						"index":6},
+						{"wellName":"Well 2818","logName":"Observer709.press .S                                            ","productid":"Pressure time", "radius":709,"unvalids":"",							"index":7},
+						{"wellName":"Well 2818","logName":"Observer709.press .Atm                                          ","productid":"Pressure value","radius":709,"unvalids":"",							"index":8}									
+					]}; 
+					$('#cartcontent').datagrid('loadData', data);
+				}
+				if (0){
 					var data ={"total":28,"rows":[
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"",							"index":1},
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},
