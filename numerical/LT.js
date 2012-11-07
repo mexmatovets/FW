@@ -26,11 +26,17 @@ function find_gamma(opt, kappa, sq, jw0){
 	}
 	return {gamma:gamma}
 }
+function find_gamma_err(gamma){
+	var gam_ev, gam_err=0;
+	gam_ev=mean(gamma).copy().abs();
+	//gam_err=abs(std(gamma))/gam_ev;
+	return gam_err;
+}
 function find_phases(opt,kappa,sq,jw0){
 	var phases=[], phases_t=[], phases_t2=[];
 	for (var i = 0; i < opt.p.length; i++){
 		//angle(pss{k}.p/qs);
-		phases[i]=angle([opt.p[i].pss.p.copy().div(sq)])[0]
+		phases[i]=angle([opt.p[i].pss.p.copy().div(sq)])[0];
 		//ph(2,k)=angle(K0(r*sqrt(jw0/kkr)));
 		var arg=jw0.copy().div(kappa).sqrt().mul(opt.p[i].pss.r);		
 		var bes=besselK0a22(arg);
@@ -141,12 +147,12 @@ function find_pow(arr){
 	return i;
 }
 function mean(arr){
-    var sum=0; 
-    var numel=arr.length;
-    for (var i = 0; i < numel; i++){
-        sum+=arr[i];
-    }
-    return sum/numel;
+	var sum=0; 
+	var numel=arr.length;
+	for (var i = 0; i < numel; i++){
+		sum+=arr[i];
+	}
+	return sum/numel;	
 }
 function polyfit(x,y,m){
 	m=m+1;
@@ -489,7 +495,11 @@ function solve_v2(opt){
 	}; 
 	if (ind===-1) throw "Root args error";//[val,inx]=min(fa);
 	var gamma=find_gamma(opt,kappa_bounds[ind],sq.r[0],jw0);
+	if (1){for (var i = 0; i < gamma.gamma.length; i++){self.log.send({mc:["gamma for "+opt.p[i].x.wellName, gamma.gamma[i].real.toFixed(2)+"+i*"+gamma.gamma[i].imag.toFixed(2)]});}}
+	//var gamma_err=find_gamma_err(gamma);
 	var phases=find_phases(opt,kappa_bounds[ind],sq.r[0],jw0);
+	var o={};phases=phases.phases;for (var i = 0; i < phases.length; i++){ o[opt.p[i].x.wellName]=[phases[0][i],phases[1][i],phases[2][i]];}
+	self.log.send({mc:["phases ", o]});
 	return {kappa:kappa_bounds[ind],gamma:gamma};
 }
 function save_curves_in_local_memory(kappa_curves, x){
@@ -522,8 +532,7 @@ function start_LT_solver_v2(obj){
 	opt.topBnd=obj.opt.topBnd;opt.stepSearch=obj.opt.stepSearch;	
 	check_bounds(opt);// необходимо совпадение границ временных отрезков у закачки и давлений
 	var inner_kappa=solve_v2(opt);	
-	
-	var kappa=1e+6*inner_kappa.kappa/utils_1D.minmax_indexes(opt.t)[1];//out.kappa_Si=(mu^2/tdist_si)*kkr;
+	var kappa=1e+6*inner_kappa.kappa/utils_1D.minmax_indexes(opt.t)[1];//приведение к СИ
 	return kappa;
 	/*------------------/*/
 }
