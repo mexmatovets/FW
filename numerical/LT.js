@@ -538,11 +538,25 @@ function start_LT_solver_v2(obj){
 }
 function preparing_for_solver_start(obj){
 	var opt={tb:0, deg:4, p:[]};
-	var r=check_conditions_on_dataType(obj,0);r=r.ps[0];appendCurve(r.name+" rate",r.x,r.y);
+	var r=check_conditions_on_dataType(obj,0);r=r.ps[0];
 	var r_max=-1e+4; for (var i = 0; i < r.y.length; i++) if (r_max<r.y[i]) r_max=r.y[i]; 
 	for (var i = 0; i < r.y.length; i++) r.y[i]/=r_max;
+	appendCurve(r.name+" rate",r.x,r.y);
 	var p=check_conditions_on_dataType(obj,1);p=p.ps;
-	opt.t=r.x; opt.q=r.y; 
+	opt.t=r.x; 
+	for (var i = 0; i < opt.t.length; i++) {r.x[i]*=3600; }
+	opt.q=r.y; 
+	var p_max=-1e+4;
+	for (var i = 0; i < p.length; i++){
+		for (var j = 0; j < p[i].x.data.length; j++){
+			if (p_max<p[i].y.data[j]) p_max=p[i].y.data[j]; 
+		}
+	}
+	for (var i = 0; i < p.length; i++){
+		for (var j = 0; j < p[i].x.data.length; j++){
+			p[i].y.data[j]/=p_max; 
+		}
+	}
 	for (var i = 0; i < p.length; i++) {if (p[i].x.R!=0) opt.p.push(p[i]);}
 
 	return opt;

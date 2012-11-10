@@ -180,7 +180,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 						<thead>
 							<tr>
 								<th rowspan="2" field="wellName" editor="text" width=80>Well name</th>
-								<th colspan="5" >Zamer</th>
+								<th colspan="5" >Measurement</th>
 							</tr>
 							<tr>
 								<th field="logName" width=110>Curve name</th>
@@ -331,7 +331,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 } ;
                 //getOpts();
                 $("#tabs").tabs();
-				if (1){
+				if (0){
 					var data ={"total":28,"rows":[
 						{"wellName":"Well 3110","logName":"Injector.rate .S                                                ","productid":"Rate time", "radius":0,  "unvalids":"",							"index":1},
 						{"wellName":"Well 3110","logName":"Injector.rate .M3/DAY                                           ","productid":"Rate value","radius":0,  "unvalids":"",							"index":2},
@@ -344,7 +344,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 					]}; 
 					$('#cartcontent').datagrid('loadData', data);
 				}
-				if (0){
+				if (1){
 					var data ={"total":28,"rows":[
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"",							"index":1},
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},
