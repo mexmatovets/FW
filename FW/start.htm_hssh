@@ -331,6 +331,17 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 } ;
                 //getOpts();
                 $("#tabs").tabs();
+				if (1){
+					var data ={"total":28,"rows":[
+						{"wellName":"Injector","logName":"Injector.rate .S                                                ","productid":"Rate time", "radius":0,  "unvalids":"",							"index":1},
+						{"wellName":"Injector","logName":"Injector.rate .M3/DAY                                           ","productid":"Rate value","radius":0,  "unvalids":"",							"index":2},
+						{"wellName":"Injector","logName":"Injector.press .S                                               ","productid":"Pressure time", "radius":0,"unvalids":"",							"index":3},
+						{"wellName":"Injector","logName":"Injector.press .Atm                                             ","productid":"Pressure value","radius":0,"unvalids":"",							"index":4},
+						{"wellName":"Observer","logName":"Observer.press .S                                                ","productid":"Pressure time",     "radius":229,  "unvalids":"",						"index":5},
+						{"wellName":"Observer","logName":"Observer.press .Atm                                              ","productid":"Pressure value",    "radius":229,  "unvalids":"",						"index":6}								
+					]}; 
+					$('#cartcontent').datagrid('loadData', data);
+				}
 				if (0){
 					var data ={"total":28,"rows":[
 						{"wellName":"Well 3110","logName":"Injector.rate .S                                                ","productid":"Rate time", "radius":0,  "unvalids":"",							"index":1},
@@ -344,7 +355,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 					]}; 
 					$('#cartcontent').datagrid('loadData', data);
 				}
-				if (1){
+				if (0){
 					var data ={"total":28,"rows":[
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"",							"index":1},
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},

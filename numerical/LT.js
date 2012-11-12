@@ -498,7 +498,7 @@ function solve_v2(opt){
 	if (1){for (var i = 0; i < gamma.gamma.length; i++){self.log.send({mc:["gamma for "+opt.p[i].x.wellName, gamma.gamma[i].real.toFixed(2)+"+i*"+gamma.gamma[i].imag.toFixed(2)]});}}
 	//var gamma_err=find_gamma_err(gamma);
 	var phases=find_phases(opt,kappa_bounds[ind],sq.r[0],jw0);
-	var o={};phases=phases.phases;for (var i = 0; i < phases.length; i++){ o[opt.p[i].x.wellName]=[phases[0][i],phases[1][i],phases[2][i]];}
+	var o={};phases=phases.phases;for (var i = 0; i < phases[0].length; i++){ o[opt.p[i].x.wellName]=[phases[0][i],phases[1][i],phases[2][i]];}
 	self.log.send({mc:["phases ", o]});
 	return {kappa:kappa_bounds[ind],gamma:gamma};
 }
@@ -541,7 +541,7 @@ function preparing_for_solver_start(obj){
 	var r=check_conditions_on_dataType(obj,0);r=r.ps[0];
 	var r_max=-1e+4; for (var i = 0; i < r.y.length; i++) if (r_max<r.y[i]) r_max=r.y[i]; 
 	for (var i = 0; i < r.y.length; i++) r.y[i]/=r_max;
-	appendCurve(r.name+" rate",r.x,r.y);
+	//appendCurve(r.name+" rate",r.x,r.y);
 	var p=check_conditions_on_dataType(obj,1);p=p.ps;
 	opt.t=r.x; 
 	for (var i = 0; i < opt.t.length; i++) {r.x[i]*=3600; }

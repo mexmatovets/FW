@@ -143,6 +143,7 @@ function Solver(toSend){
 };
 function appendCurve(name,x,y){
 	var pairs=[];
+	//if (isNaN(x[0])||isNaN(y[0]) throw "Can't add NaN!";
 	for (var i = 0; i<x.length; i++){pairs[i]=[x[i],y[i]]};
 	var curve=reduse_curve(pairs,512,512).cn;self.log.send({aa:[name, curve]});
 }
