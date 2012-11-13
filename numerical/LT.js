@@ -428,6 +428,7 @@ function check_conditions_on_dataType(obj,flag_rate0_or_pres1){
 				if (x[i].wellName===y[j].wellName) {
 					if (x[i].R!=y[j].R) throw "Wells with similar names must have similar R!";
 					var tmpT=LPC.Tic(); var resUnv=avoid_unvalids(x[i].data, y[j].data, x[i].unvalids);x[i].data=resUnv.x;y[j].data=resUnv.y; avoidTime+=tmpT.sec();
+					if (isNaN(x[i].data[0])||isNaN(y[j].data[0])) throw "Bad array data!";
 					if (x[i].R!=0) appendCurve(x[i].wellName+" pressure",x[i].data,y[j].data);
 					else appendCurve(x[i].wellName+" press_injection",x[i].data,y[j].data);
 					ps.push({x:x[i],y:y[j]});

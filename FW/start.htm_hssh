@@ -194,7 +194,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 					</div>
 				</div>
                 </div>
-                <div title="Input data" style="padding:10px;">
+                <!--<div title="Input data" style="padding:10px;">
                     <form>
                         <p> Расстояние между скважинами<br>
                             <input id="R"  type="text" value="464" id="REdit" style="width:60px">
@@ -209,7 +209,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                             [mPa*sec]
                         </p>
                     </form>
-                </div>
+                </div>-->
 				<div title="View">
                     <div id="myView2" style="padding:20px;overflow:hidden;">
                         <!--<div id="rd1" style="margin:10px;padding:10px;width:500px;height:110px;background:#fafafa;border:1px solid #bbb;"></div>-->
@@ -293,7 +293,9 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 			//start_LT_solver(m[0].obj);
 		}
 		}) );		
-
+		if(url.toLowerCase().match('.ini')){
+			var ini_res=inifile_parse(fileAsText);
+		}
         readLogsNames({url:url, fileAsText:fileAsText})({
             done:function(r){
 				updateTrees(r.logs);

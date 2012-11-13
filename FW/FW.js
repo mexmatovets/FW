@@ -39,7 +39,7 @@ function readLogsNames(somefile)
 {
     if(LPC.is_worker())
     {
-        if(somefile.url.match('.las')||somefile.url.match('.LAS')){
+        if(somefile.url.toLowerCase().match('.las')){
             if(self.txtfile) delete (self.txtfile);
             var lasfile = somefile;
             self.tic=LPC.Tic();
@@ -50,7 +50,7 @@ function readLogsNames(somefile)
             self.LAS_logs=self.LAS.curve_names;
             return  {logs:self.LAS_logs, newfile: self.newfile}
         }
-        if(somefile.url.match('.txt')){
+        if(somefile.url.toLowerCase().match('.txt')){
             if(self.lasfile) delete (self.lasfile);
             self.txtfile = somefile;
             self.tic=LPC.Tic();
