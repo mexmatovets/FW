@@ -65,15 +65,15 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 </div>
                 <div title="Values" iconCls="icon-reload" style="padding:10px;">
                     <form>
-                        <p> Пьезопроводность<br>
+                        <p> Piesoconductivity<br>
                             <input id="kappa"  type="text"  style="width:90px">
                             [cm^2/sec]
                         </p><br>
-                        <p> Гидропроводность<br>
+                        <p> Hydroconductivity<br>
                             <input id="hyd"    type="text"  style="width:90px">
                             [m^3/(Pa*sec)]
                         </p><br>
-                        <p> Проницаемость<br>
+                        <p> Permeability<br>
                             <input id="perm"   type="text"  style="width:90px">
                             [mD]
                         </p><br>
@@ -103,31 +103,31 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 </div>
                 <div title="Input data" style="padding:10px;">
                     <form>
-                        <p> Эффективная толщина пласта<br>
+                        <p> Eeffective thickness<br>
                             <input id="h"  type="text" value="4.5" style="width:60px">
                             [m]
                         </p><br>
-                        <p> Вязкость<br>
+                        <p> Viscosity<br>
                             <input id="mu" type="text" value="0.6" style="width:60px">
                             [mPa*sec]
                         </p><br>
-						<p> Пористость<br>
+						<p> Porosity<br>
                             <input id="poro" type="text" value="0.16" style="width:60px">
                             []
                         </p><br>
-						<p> Сжимаемость жидкости<br>
+						<p> Fluid compressibility<br>
                            <input id="Bj" type="text" value="0.0002" style="width:60px">
                             [1/atm]
                         </p><br>
-						<p> Сжимаемость пласта<br>
+						<p> Plast compressibility<br>
                             <input id="Bc" type="text" value="0.00004" style="width:60px">
                             [1/atm]
                         </p><br>
-						<p> Верхняя граница поиска пьезопроводности<br>
+						<p> Top bound<br>
                             <input id="topBnd" type="text" value="15000" style="width:60px">
                             [cm^2/sec]
                         </p><br>
-						<p> Шаг поиска пьезопроводности<br>
+						<p> Step<br>
                             <input id="stepSearch" type="text" value="10" style="width:60px">
                             [cm^2/sec]
                         </p><br>
@@ -151,15 +151,15 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 </div>
                 <div title="Values" iconCls="icon-reload" style="padding:10px;">
                     <form>
-                        <p> Пьезопроводность<br>
+                        <p> Piesoconductivity<br>
                             <input id="kappa2"  type="text"  style="width:90px">
                             [cm^2/sec]
                         </p><br>
-                        <p> Гидропроводность<br>
+                        <p> Hydroconductivity<br>
                             <input id="hyd2"    type="text"  style="width:90px">
                             [m^3/(Pa*sec)]
                         </p><br>
-                        <p> Проницаемость<br>
+                        <p> Permeability<br>
                             <input id="perm2"   type="text"  style="width:90px">
                             [mD]
                         </p><br>
@@ -292,9 +292,12 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 			self.m=m;
 			//start_LT_solver(m[0].obj);
 		}
-		}) );		
-		if(url.toLowerCase().match('.ini')){
-			var ini_res=inifile_parse(fileAsText);
+		}) );	
+		if(0){
+			if(url.toLowerCase().match('.ini')){
+				var iniFileParseResult=inifile_parse(fileAsText);
+				var iniObjectParseResult=iniobject_parse(iniFileParseResult);
+			}
 		}
         readLogsNames({url:url, fileAsText:fileAsText})({
             done:function(r){
@@ -361,14 +364,17 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 					var data ={"total":28,"rows":[
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"",							"index":1},
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},
-						{"wellName":"Well 2839","logName":"Well_2839.pressure.time   .S                                    ","productid":"Pressure time", "radius":464,"unvalids":"",							"index":3},
+						{"wellName":"Well 2839","logName":"Well_2839.pressure.time   .S                                    ","productid":"Pressure time", "radius":464,"unvalids":"1 20 160 180 270 300",							"index":3},
 						{"wellName":"Well 2839","logName":"Well_2839.pressure.value   .Atm                                 ","productid":"Pressure value","radius":464,"unvalids":"",							"index":4},
 						{"wellName":"Well 3110","logName":"Well_3110.rate.time  	  .S                                    ","productid":"Rate time",     "radius":0,  "unvalids":"",							"index":5},
 						{"wellName":"Well 3110","logName":"Well_3110.rate.value  	  .M3/DAY                               ","productid":"Rate value",    "radius":0,  "unvalids":"",							"index":6},
-						{"wellName":"Well 2818","logName":"Well_2818	              .S	                                ","productid":"Pressure time", "radius":496,"unvalids":"",							"index":7},
-						{"wellName":"Well 2818","logName":"Well_2818                 .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":8},
-						{"wellName":"Well 7138","logName":"Well_7138	 	  	      .S	                                ","productid":"Pressure time", "radius":709,"unvalids":"",							"index":9},
-						{"wellName":"Well 7138","logName":"Well_7138  			  	  .Atm                                  ","productid":"Pressure value","radius":709,"unvalids":"",							"index":10}									
+						{"wellName":"Well 2818_bad","logName":"Well_2818	              .S	                                ","productid":"Pressure time", "radius":496,"unvalids":"",							"index":7},
+						{"wellName":"Well 2818_bad","logName":"Well_2818                 .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":8},	
+						{"wellName":"Well 2818","logName":"Well_2818	              .S	                                ","productid":"Pressure time", "radius":496,"unvalids":"1 20 160 180 270 300",							"index":9},
+						{"wellName":"Well 2818","logName":"Well_2818                 .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":10}
+
+						//{"wellName":"Well 7138","logName":"Well_7138	 	  	      .S	                                ","productid":"Pressure time", "radius":709,"unvalids":"",							"index":9},
+						//{"wellName":"Well 7138","logName":"Well_7138  			  	  .Atm                                  ","productid":"Pressure value","radius":709,"unvalids":"",							"index":10}									
 					]}; 
 					$('#cartcontent').datagrid('loadData', data);
 				}

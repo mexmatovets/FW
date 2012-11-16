@@ -470,14 +470,17 @@ function solve_v1(lps, lqs, z){
 }
 function solve_v2(opt){
 	var q=opt.q; var qf=[];
+	/*проверка константности массива*/var m=q[0]; flag_massiv_tozd=true; for (var i = 0; i < q.length; i++) {if(m!==q[i]) flag_massiv_tozd=false; } if (flag_massiv_tozd){throw "Please select rate correctly, array is constant for each times"}
 	var q_mean=mean(q); for (var i = 0; i < q.length; i++){qf[i]=q[i]-q_mean}// вычитание среднего значения
 	var nn=find_pow(qf); var fft=new FFT(Math.pow(2,nn)); var qq=prepare_interpolate_rate_for_fft(opt.t,qf); interp_res=utils_1D.l1_interpolate(qq).make_array(Math.pow(2,nn)).zero_shift();fft.forward(interp_res);//подготовка и проведение ффт
 	var sp=fft.spectrum; var ind=0; var sm = -1e+4; for (var i = 0; i < sp.length; i++) {if (sp[i]>sm) {sm=sp[i]; ind=i}} var jw0= new Complex(0, 2*Math.PI*(ind)); // нахожение главной моды спектра
 	var t = norm(opt.t); var lq=new LT(q, t);//var t = opt.t; var tm = -1e+4; for (var i = 0; i < t.length; i++) {if (t[i]>tm) {tm=t[i];}}; for (var i = 0; i < t.length; i++) {t[i]=t[i]/tm}; //нормировка временной шкалы
+	//jw0.real=0; jw0.imag=13.797;
 	sq=lq.make_int([jw0]);//вычисление инреграла Лапласа
 	for (var i = 0; i < opt.p.length; i++){
 		var p = opt.p[i];
 		var pc=eliminate_bk(p,opt.deg);
+		appendCurve(p.x.wellName+" no trend",norm(p.x.data),pc);
 		var lp=new LT(pc,norm(p.x.data));
 		var sp=lp.make_int([jw0]);
 		opt.p[i].pss={r:opt.p[i].x.R/1000,p:sp.r[0]};
@@ -496,7 +499,7 @@ function solve_v2(opt){
 	}; 
 	if (ind===-1) throw "Root args error";//[val,inx]=min(fa);
 	var gamma=find_gamma(opt,kappa_bounds[ind],sq.r[0],jw0);
-	if (1){for (var i = 0; i < gamma.gamma.length; i++){self.log.send({mc:["gamma for "+opt.p[i].x.wellName, gamma.gamma[i].real.toFixed(2)+"+i*"+gamma.gamma[i].imag.toFixed(2)]});}}
+	if (1){for (var i = 0; i < gamma.gamma.length; i++){self.log.send({mc:["gamma for "+opt.p[i].x.wellName, gamma.gamma[i].real.toExponential(2)+"+i*"+gamma.gamma[i].imag.toExponential(2)]});}}
 	//var gamma_err=find_gamma_err(gamma);
 	var phases=find_phases(opt,kappa_bounds[ind],sq.r[0],jw0);
 	var o={};phases=phases.phases;for (var i = 0; i < phases[0].length; i++){ o[opt.p[i].x.wellName]=[phases[0][i],phases[1][i],phases[2][i]];}

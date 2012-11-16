@@ -215,3 +215,35 @@ function inifile_parse(data){
 	});
 	return value;
 }
+function iniobject_parse(obj){
+	var model_data_obj=parse_data(obj,'model');
+	var calc_data_obj=parse_data(obj,'calc');
+	var wells_data_obj=parse_data(obj,'wells');
+	return {};
+}
+function make_warnings(obj, flag){
+	if (flag==='model'){
+	
+	}
+	if (flag==='calc'){
+	
+	}
+	if (flag==='wells'){
+	
+	}
+}
+function units_adduction(section, flag){
+	if (flag==='model'){
+	
+	}
+	if (flag==='calc'){
+	
+	}
+	if (flag==='wells'){
+	
+	}
+}
+function parse_data(obj,flag){
+	make_warnings(section, flag);
+	units_adduction(section, flag);
+}
