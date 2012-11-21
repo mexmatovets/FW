@@ -86,21 +86,6 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 				<div  title="Outside data" iconCls="icon-ok" style="overflow:hidden;">
 					<iframe id ="outsdata" style="height:100%;width:100%;overflow:hidden;" src="about:blank"></iframe><!--"http://localhost:7777/::ltxsilk=::/?FD583F3CB33E4226B56558AF1F59C7C3=D%3A/Downloads/hssh/hssh/uptdir/a_FWonGitHub/.htm_hssh"-->				
                 </div>
-				<div title="Table">
-                    <table id="tt" style="width:700px;height:auto" title="Editable DataGrid" iconCls="icon-edit" singleSelect="true" idField="itemid" url="datagrid_data2.json">
-						<thead>
-							<tr>
-								<th field="itemid" width="80">Well</th>
-								<th field="productid" width="120" formatter="productFormatter" editor="{type:'combobox',options:{valueField:'productid',textField:'name',data:products,required:true}}">Time</th>
-								<th field="productid" width="120" formatter="productFormatter" editor="{type:'combobox',options:{valueField:'productid',textField:'name',data:products,required:true}}">Value</th>
-								<th field="listprice" width="80" align="right" editor="{type:'numberbox',options:{precision:1}}">Radius</th>
-								<!--<th field="unitcost" width="80" align="right" editor="numberbox">Unit Cost</th>-->
-								<!--<th field="attr1" width="250" editor="text">Attribute</th>-->
-								<th field="status" width="60" align="center" editor="{type:'checkbox',options:{on:'P',off:''}}">Status</th>
-							</tr>
-						</thead>
-					</table>
-                </div>
                 <div title="Input data" style="padding:10px;">
                     <form>
                         <p> Eeffective thickness<br>
@@ -122,6 +107,10 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 						<p> Plast compressibility<br>
                             <input id="Bc" type="text" value="0.00004" style="width:60px">
                             [1/atm]
+                        </p><br>
+						<p> Period<br>
+                            <input id="period" type="text" value="1.0" style="width:60px">
+                            [hr]
                         </p><br>
 						<p> Top bound<br>
                             <input id="topBnd" type="text" value="15000" style="width:60px">
@@ -210,13 +199,6 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                         </p>
                     </form>
                 </div>-->
-				<div title="View">
-                    <div id="myView2" style="padding:20px;overflow:hidden;">
-                        <!--<div id="rd1" style="margin:10px;padding:10px;width:500px;height:110px;background:#fafafa;border:1px solid #bbb;"></div>-->
-                        <!--<div id="InjectorRate" style="background:#fafafa">Injector rate<br></div>-->
-                        <div id="placeholderQ2" style="width:400px;height:300px"></div>
-                    </div>
-                </div>
 				<div title="View manager">
                     <div style="padding:20px;overflow:hidden;">
 						<a href="#" class="easyui-linkbutton" onclick="addRate()" >Show rate</a>
@@ -235,7 +217,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
         <div region="center" style="overflow:hidden;">
 			<input type="edit" hidden="true" style="color: #000000; background-color:#AAAAAA; width: 300px;" id='iurl' value="2_2_period_short.las"  >
 			<!--<input type="button" style="" id='qq' value=">>" onClick="readFileInWorker()" >-->
-			<a href="#" class="easyui-linkbutton" id='qq' onClick="readFileInWorker()" >Read default</a>
+			<!--<a href="#" class="easyui-linkbutton" id='qq' onClick="readFileInWorker()" >Read default</a>-->
             <a href="#" class="easyui-linkbutton" onclick="continueProcessing()" >Start calculation</a>	
 			<!--<a href="#" class="easyui-linkbutton" hidden="true" onclick="testProgressbar()" >Test</a>	-->
         </div>
@@ -336,7 +318,7 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
                 } ;
                 //getOpts();
                 $("#tabs").tabs();
-				if (1){
+				if (0){
 					var data ={"total":28,"rows":[
 						{"wellName":"Injector","logName":"Injector.rate .S                                                ","productid":"Rate time", "radius":0,  "unvalids":"",							"index":1},
 						{"wellName":"Injector","logName":"Injector.rate .M3/DAY                                           ","productid":"Rate value","radius":0,  "unvalids":"",							"index":2},
@@ -364,6 +346,21 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 					var data ={"total":28,"rows":[
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"",							"index":1},
 						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},
+						{"wellName":"Well 2818","logName":"Well_2818	              .S	                                ","productid":"Pressure time", "radius":496,"unvalids":"1 20 160 180 270 300",							"index":3},
+						{"wellName":"Well 2818","logName":"Well_2818                 .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":4},
+						{"wellName":"Well 3110","logName":"Well_3110.rate.time  	  .S                                    ","productid":"Rate time",     "radius":0,  "unvalids":"",							"index":5},
+						{"wellName":"Well 3110","logName":"Well_3110.rate.value  	  .M3/DAY                               ","productid":"Rate value",    "radius":0,  "unvalids":"",							"index":6}
+
+
+						//{"wellName":"Well 7138","logName":"Well_7138	 	  	      .S	                                ","productid":"Pressure time", "radius":709,"unvalids":"",							"index":9},
+						//{"wellName":"Well 7138","logName":"Well_7138  			  	  .Atm                                  ","productid":"Pressure value","radius":709,"unvalids":"",							"index":10}									
+					]};	
+					$('#cartcontent').datagrid('loadData', data);
+				}					
+				if (0){
+					var data ={"total":28,"rows":[
+						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"",							"index":1},
+						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},
 						{"wellName":"Well 2839","logName":"Well_2839.pressure.time   .S                                    ","productid":"Pressure time", "radius":464,"unvalids":"1 20 160 180 270 300",							"index":3},
 						{"wellName":"Well 2839","logName":"Well_2839.pressure.value   .Atm                                 ","productid":"Pressure value","radius":464,"unvalids":"",							"index":4},
 						{"wellName":"Well 3110","logName":"Well_3110.rate.time  	  .S                                    ","productid":"Rate time",     "radius":0,  "unvalids":"",							"index":5},
@@ -372,6 +369,22 @@ FD583F3CB33E4226B56558AF1F59C7C3.root_rel=/../../
 						{"wellName":"Well 2818_bad","logName":"Well_2818                 .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":8},	
 						{"wellName":"Well 2818","logName":"Well_2818	              .S	                                ","productid":"Pressure time", "radius":496,"unvalids":"1 20 160 180 270 300",							"index":9},
 						{"wellName":"Well 2818","logName":"Well_2818                 .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":10}
+
+						//{"wellName":"Well 7138","logName":"Well_7138	 	  	      .S	                                ","productid":"Pressure time", "radius":709,"unvalids":"",							"index":9},
+						//{"wellName":"Well 7138","logName":"Well_7138  			  	  .Atm                                  ","productid":"Pressure value","radius":709,"unvalids":"",							"index":10}									
+					]}; 
+					$('#cartcontent').datagrid('loadData', data);
+				}				
+				if (1){
+					var data ={"total":28,"rows":[
+						{"wellName":"Well 3110","logName":"Well_3110.pressure.time   .S                                    ","productid":"Pressure time", "radius":0,  "unvalids":"",							"index":1},
+						{"wellName":"Well 3110","logName":"Well_3110.pressure.value  .Atm                                  ","productid":"Pressure value","radius":0,  "unvalids":"",							"index":2},
+						{"wellName":"Well 2839","logName":"Well_2839.pressure.time   .S                                    ","productid":"Pressure time", "radius":464,"unvalids":"1 20 160 180 270 300",							"index":3},
+						{"wellName":"Well 2839","logName":"Well_2839.pressure.value   .Atm                                 ","productid":"Pressure value","radius":464,"unvalids":"",							"index":4},
+						{"wellName":"Well 3110","logName":"Well_3110.rate.time  	  .S                                    ","productid":"Rate time",     "radius":0,  "unvalids":"",							"index":5},
+						{"wellName":"Well 3110","logName":"Well_3110.rate.value  	  .M3/DAY                               ","productid":"Rate value",    "radius":0,  "unvalids":"",							"index":6},
+						{"wellName":"Well 2818","logName":"Well_2818	              .S	                                ","productid":"Pressure time", "radius":496,"unvalids":"1 20 160 180 270 300",							"index":7},
+						{"wellName":"Well 2818","logName":"Well_2818                 .Atm                                  ","productid":"Pressure value","radius":496,"unvalids":"",							"index":8}
 
 						//{"wellName":"Well 7138","logName":"Well_7138	 	  	      .S	                                ","productid":"Pressure time", "radius":709,"unvalids":"",							"index":9},
 						//{"wellName":"Well 7138","logName":"Well_7138  			  	  .Atm                                  ","productid":"Pressure value","radius":709,"unvalids":"",							"index":10}									

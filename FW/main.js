@@ -115,6 +115,7 @@ function getOpts(){
 		consts.poro=$('#poro')[0].value-0;
 		consts.B_c=$('#Bc')[0].value-0;
 		consts.B_gi=$('#Bj')[0].value-0;
+		inputDataToWorker.period=$('#period')[0].value-0; 
 		inputDataToWorker.consts=consts;
 		try{
 			inputDataToWorker.stepSearch=($('#stepSearch')[0].value-0)*1e-4;
